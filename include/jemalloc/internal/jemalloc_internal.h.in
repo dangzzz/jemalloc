@@ -227,6 +227,8 @@ static const bool config_ivsalloc =
 /******************************************************************************/
 #define	JEMALLOC_H_TYPES
 
+#define JEMALLOC_LSMALLOC
+
 #include "jemalloc/internal/jemalloc_internal_macros.h"
 
 #define	MALLOCX_LG_ALIGN_MASK	((int)0x3f)
