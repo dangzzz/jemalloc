@@ -314,16 +314,19 @@ struct arena_s {
 	//以下操作受arena->lock保护
 
 	/* 可用chunk的树,对应lchunk->avail_link */
-	lchunk_avail_tree_t lchunks_avail;
+	lchunk_avail_tree_t 	lchunks_avail;
 
 	/* 需要垃圾回收的chunk的树,对应lchunk->dirty_link */
-	lchunk_dirty_tree_t	lchunks_dirty;
+	lchunk_dirty_tree_t		lchunks_dirty;
 
 	/* 为了避免"释放-马上分配"操作的低效,会保留一个lchunk不被释放,如果需要分配时使用该lchunk */
 	log_chunk_t 			*lspare;
 
 	/* 记录对该arena管理的内存的malloc/free次数,用于触发垃圾回收 */
 	int						nop;
+	
+	/* gc时数据迁移的目的地 */
+	log_chunk_t				*gc_lchunk;
 
 #endif
 
@@ -969,6 +972,21 @@ arena_malloc(arena_t *arena, size_t size, bool zero, bool try_tcache)
 
 	assert(size != 0);
 	assert(size <= arena_maxclass);
+#ifdef JEMALLOC_LSMALLOC
+
+	if (size <= LOG_MINSIZE) {
+		if (try_tcache && (tcache = tcache_get(true)) != NULL)
+			return (tcache_alloc_small(tcache, size, zero));
+		else {
+			return (arena_malloc_small(choose_arena(arena), size,
+			    zero));
+		}
+	} else {
+		//todo ls
+	}
+	
+
+#else
 
 	if (size <= SMALL_MAXCLASS) {
 		if (try_tcache && (tcache = tcache_get(true)) != NULL)
@@ -990,6 +1008,7 @@ arena_malloc(arena_t *arena, size_t size, bool zero, bool try_tcache)
 			    zero));
 		}
 	}
+#endif
 }
 
 /* Return the size of the allocation pointed to by ptr. */
