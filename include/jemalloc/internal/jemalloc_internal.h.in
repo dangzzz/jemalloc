@@ -451,6 +451,9 @@ static const bool config_ivsalloc =
 #include "jemalloc/internal/tsd.h"
 #include "jemalloc/internal/mb.h"
 #include "jemalloc/internal/extent.h"
+#ifdef JEMALLOC_LSMALLOC
+#include "jemalloc/internal/lsmalloc.h"
+#endif
 #include "jemalloc/internal/arena.h"
 #include "jemalloc/internal/bitmap.h"
 #include "jemalloc/internal/base.h"
@@ -461,9 +464,7 @@ static const bool config_ivsalloc =
 #include "jemalloc/internal/hash.h"
 #include "jemalloc/internal/quarantine.h"
 #include "jemalloc/internal/prof.h"
-#ifdef JEMALLOC_LSMALLOC
-#include "jemalloc/internal/lsmalloc.h"
-#endif
+
 
 #undef JEMALLOC_H_TYPES
 /******************************************************************************/
@@ -481,6 +482,9 @@ static const bool config_ivsalloc =
 #include "jemalloc/internal/mb.h"
 #include "jemalloc/internal/bitmap.h"
 #include "jemalloc/internal/extent.h"
+#ifdef JEMALLOC_LSMALLOC
+#include "jemalloc/internal/lsmalloc.h"
+#endif
 #include "jemalloc/internal/arena.h"
 #include "jemalloc/internal/base.h"
 #include "jemalloc/internal/chunk.h"
@@ -490,9 +494,7 @@ static const bool config_ivsalloc =
 #include "jemalloc/internal/hash.h"
 #include "jemalloc/internal/quarantine.h"
 #include "jemalloc/internal/prof.h"
-#ifdef JEMALLOC_LSMALLOC
-#include "jemalloc/internal/lsmalloc.h"
-#endif
+
 
 typedef struct {
 	uint64_t	allocated;
@@ -554,6 +556,9 @@ void	jemalloc_postfork_child(void);
 #include "jemalloc/internal/mb.h"
 #include "jemalloc/internal/bitmap.h"
 #include "jemalloc/internal/extent.h"
+#ifdef JEMALLOC_LSMALLOC
+#include "jemalloc/internal/lsmalloc.h"
+#endif
 #include "jemalloc/internal/arena.h"
 #include "jemalloc/internal/base.h"
 #include "jemalloc/internal/chunk.h"
@@ -563,9 +568,7 @@ void	jemalloc_postfork_child(void);
 #include "jemalloc/internal/hash.h"
 #include "jemalloc/internal/quarantine.h"
 #include "jemalloc/internal/prof.h"
-#ifdef JEMALLOC_LSMALLOC
-#include "jemalloc/internal/lsmalloc.h"
-#endif
+
 
 #undef JEMALLOC_H_EXTERNS
 /******************************************************************************/
@@ -729,6 +732,11 @@ choose_arena(arena_t *arena)
 
 #include "jemalloc/internal/bitmap.h"
 #include "jemalloc/internal/rtree.h"
+
+#ifdef JEMALLOC_LSMALLOC
+#include "jemalloc/internal/lsmalloc.h"
+#endif
+
 /*
  * Include arena.h twice in order to resolve circular dependencies with
  * tcache.h.
@@ -743,9 +751,7 @@ choose_arena(arena_t *arena)
 #include "jemalloc/internal/hash.h"
 #include "jemalloc/internal/quarantine.h"
 
-#ifdef JEMALLOC_LSMALLOC
-#include "jemalloc/internal/lsmalloc.h"
-#endif
+
 
 #ifndef JEMALLOC_ENABLE_INLINE
 void	*imalloct(size_t size, bool try_tcache, arena_t *arena);

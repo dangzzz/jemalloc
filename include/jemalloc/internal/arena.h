@@ -312,6 +312,7 @@ struct arena_s {
 
 #ifdef JEMALLOC_LSMALLOC
 	//以下操作受arena->lock保护
+
 	/* 可用chunk的树,对应lchunk->avail_link */
 	lchunk_avail_tree_t lchunks_avail;
 
