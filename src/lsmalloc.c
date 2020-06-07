@@ -142,7 +142,9 @@ lregion_to_user_pointer(log_region_t *lregion){
 }
 /******************************************************************************/
 
+//todo lchunk alloc
 
+/* 释放一个lchunk.过程是先放在arena->spare,然后再释放 */
 static void
 log_chunk_dealloc(arena_t *arena, log_chunk_t *lchunk)
 {
@@ -163,9 +165,15 @@ log_chunk_dealloc(arena_t *arena, log_chunk_t *lchunk)
 }
 
 
+/* mark指将需要gc的lchunk从arena->lchunks_avail转移到arena->lchunks_dirty */
+
+/* mark过程是只在free结束后满足gc条件时做,而arena_gc_own实际的gc过程,只有当前线程马上完成gc,
+ * 其他线程会在malloc或free开始时做.
+ */
 static void 
 arena_gc_mark_lchunk(arena_t *arena)
-{
+{	
+	/* 迭代availtree,判断是否需要gc并加入dirtytree */
 	log_chunk_t *lchunk = lchunk_avail_tree_first(&arena->lchunks_avail);
 	while (lchunk != NULL)
 	{
@@ -176,6 +184,8 @@ arena_gc_mark_lchunk(arena_t *arena)
 		lchunk = lchunk_avail_tree_next(&arena->lchunks_avail, lchunk);
 	}
 
+	/* 加入dirtytree的全部在availtree中删除 */
+	//todo:合并这两个过程
 	log_chunk_t *lchunk2 = lchunk_dirty_tree_first(&arena->lchunks_dirty);
 	while (lchunk2 != NULL)
 	{
@@ -191,6 +201,7 @@ arena_gc_mark_lchunk(arena_t *arena)
 	return;
 }
 
+/* 将lregion以appende的形式复制到lchunk */
 static inline void 
 arena_lchunk_append_copy(arena_t *arena, log_chunk_t *lchunk, log_region_t *lregion, size_t size)
 {
@@ -198,6 +209,7 @@ arena_lchunk_append_copy(arena_t *arena, log_chunk_t *lchunk, log_region_t *lreg
 	log_region_t *new_lregion = arena_lchunk_append_to_tail(arena,lchunk,size);
 	
 	memcpy(new_lregion, lregion, size);
+	/* tree_link和用户保留的地址需要被更新 */
 	new_lregion->lregion_link.rbn_left = 0;
 	new_lregion->lregion_link.rbn_right_red = 0;
     *(new_lregion->ptr) = lregion_to_user_pointer(new_lregion);
@@ -206,11 +218,18 @@ arena_lchunk_append_copy(arena_t *arena, log_chunk_t *lchunk, log_region_t *lreg
 
 }
 
+/* 转移一个lregion */
 static inline void 
-arena_dirty_lchunk_migrate(log_chunk_t *lchunk, arena_t *arena, log_region_t *lregion)
+arena_dirty_lregion_migrate(log_chunk_t *lchunk, arena_t *arena, log_region_t *lregion)
 {
 	size_t size = lregion->size;
 
+	/* arena->gc_lchunk需要创建一个新的当满足以下任一条件:
+	 * 1.arena->gc_lchunk为空
+	 * 2.arena->gc_lchunk放不下当前lregion
+	 * 3.arena->gc_lchunk正是正在被gc的lchunk
+	 * 4.todo:arena->gc_lchunk不是正在被gc的lchunk,但是也在被gc
+	 */
 	if ((arena->gc_lchunk == NULL) || (lchunk == arena->gc_lchunk) || ((intptr_t)(arena->gc_lchunk->tail) + size - (intptr_t)arena->gc_lchunk >= chunksize))
 	{
 		arena->gc_lchunk = log_chunk_alloc(arena);
@@ -219,6 +238,10 @@ arena_dirty_lchunk_migrate(log_chunk_t *lchunk, arena_t *arena, log_region_t *lr
 	arena_lchunk_append_copy(arena, gc_lchunk, lregion, size);
 }
 
+/* 完成当前进程的对该lchunk的gc */
+/*
+ * 大体功能:迭代所有lregion,将还在活跃的数据进行转移
+ */
 static void 
 arena_do_dirty_lchunk_gc(arena_t *arena, log_chunk_t *lchunk)
 {
@@ -228,13 +251,19 @@ arena_do_dirty_lchunk_gc(arena_t *arena, log_chunk_t *lchunk)
 	{
 		if (lregion->pid == pid && ((lregion->attr & 1UL) == 0))
 		{
-			arena_dirty_lchunk_migrate(lchunk, arena, lregion);
+			arena_dirty_lregion_migrate(lchunk, arena, lregion);
 			lchunk->size_dirty += lregion->size;
 		}
 		lregion = lregion_tree_next(&lchunk->lregions, lregion);
 	}
 }
 
+/* 一个线程gc属于自己的数据的入口 */
+/* 
+ * 大体功能:将所有在arena->lchunks_dirty里保存的等待被gc的lchunk依次迭代,
+ * 调用线程把里面所有属于自己的活跃数据转移到新的lchunk,当一个lchunk所有活跃
+ * 数据都被转移后,释放lchunk.
+ */
 static void 
 arena_gc_own(arena_t *arena, pid_t pid)
 {
@@ -243,7 +272,9 @@ arena_gc_own(arena_t *arena, pid_t pid)
 	bool todel = false;
 	while (lchunk != NULL)
 	{
+		/* 实际gc迭代到的lchunk的入口 */
 		arena_do_dirty_lchunk_gc(arena, lchunk);
+		/* 检查是否完成全部gc,可以释放 */
 		if (lchunk->size_dirty == ((intptr_t)lchunk->tail - (intptr_t)lchunk - sizeof(log_chunk_t)))
 		{
 			todel = true;
@@ -251,6 +282,8 @@ arena_gc_own(arena_t *arena, pid_t pid)
 		}
 
 		lchunk = lchunk_dirty_tree_next(&arena->lchunks_dirty, lchunk);
+
+		/* 实际释放lchunk */
 		if (todel)
 		{
 			log_chunk_dealloc(arena, lchunktodel);
@@ -264,7 +297,7 @@ arena_gc_own(arena_t *arena, pid_t pid)
 
 // todo arena_alloc_region
 
-
+/* log-structured分配的入口,由jemalloc.c直接跳转到这里完成分配 */
 void *
 arena_log_malloc(arena_t *arena, size_t size, bool zero, void **ptr)
 {
@@ -273,14 +306,19 @@ arena_log_malloc(arena_t *arena, size_t size, bool zero, void **ptr)
 
 	malloc_mutex_lock(&arena->lock);
 	arena->nop++;
+	
+	/* 每个线程完成自己垃圾回收,目前没有条件 */
 	if (true)
 	{
 		arena_gc_own(arena, get_tid());
 	}
 
+	/* 分配的大小需要加上header的大小,同时对齐到8字节 */
 	size += sizeof(log_region_t);
 	size = ALIGNMENT_CEILING(size, sizeof(long long));
-	lregion = arena_alloc_region(arena, size, zero, ptr);
+
+	/* 通过arena_alloc_lregion来完成分配,返回lregion */
+	lregion = arena_alloc_lregion(arena, size, zero, ptr);
 
 	if (log == NULL)
 	{
@@ -288,6 +326,7 @@ arena_log_malloc(arena_t *arena, size_t size, bool zero, void **ptr)
 		return (NULL);
 	}
 
+	/* ret是实际返回给用户的地址,需要去掉header */
 	ret = (void *)((intptr_t)log + sizeof(log_region_t));
 
 	malloc_mutex_unlock(&arena->lock);
