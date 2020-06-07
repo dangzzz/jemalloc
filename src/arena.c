@@ -2333,6 +2333,7 @@ arena_new(arena_t *arena, unsigned ind)
 	arena->nactive = 0;
 	arena->ndirty = 0;
 	arena->npurgatory = 0;
+	//todo add log related init
 
 	arena_avail_tree_new(&arena->runs_avail);
 

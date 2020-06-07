@@ -104,7 +104,7 @@ chunksize_beforetail(log_chunk_t *lchunk){
 }
 
 /* 
- * 返回lchunk是否需要gc,满足条件
+ * 返回lchunk是否需要gc,满足条件,见以下两个宏的定义
  * GC_TAIL_RATE
  * GC_DIRTY_RATE
  */
@@ -142,7 +142,64 @@ lregion_to_user_pointer(log_region_t *lregion){
 }
 /******************************************************************************/
 
-//todo lchunk alloc
+/* 通过arena->lspare快速回收lchunk */
+static log_chunk_t *
+arena_lchunk_init_spare(arena_t *arena)
+{
+	log_chunk_t *lchunk;
+
+	lchunk = arena->lspare;
+	arena->lspare = NULL;
+
+	return lchunk;
+}
+
+/* mmap 一个 lchunk,并完成初始化 */
+static log_chunk_t *
+arena_lchunk_init_hard(arena_t *arena)
+{
+	log_chunk_t *lchunk;
+	bool zero;
+	size_t unzeroed, i;
+
+	zero = false;
+	malloc_mutex_unlock(&arena->lock);
+	lchunk = (log_chunk_t *)chunk_alloc(chunksize, chunksize, false,
+									  &zero, arena->dss_prec);
+	malloc_mutex_lock(&arena->lock);
+	if (lchunk == NULL)
+		return (NULL);
+
+	lchunk->arena = arena;
+
+	lchunk->size_dirty = 0;
+
+	lchunk->tail = (void *)(((intptr_t)lchunk) + sizeof(log_chunk_t));
+	lchunk->tail = (void *)ALIGNMENT_CEILING((intptr_t)lchunk->tail, sizeof(long long));
+	lregion_tree_new(&lchunk->lregions);
+	return lchunk;
+}
+
+
+/* 分配一个lchunk,有spare和hard两种方式 */
+static log_chunk_t *
+log_chunk_alloc(arena_t *arena)
+{
+	log_chunk_t *lchunk;
+
+	if (arena->lspare != NULL)
+		lchunk = arena_lchunk_init_spare(arena);
+	else
+	{
+		lchunk = arena_lchunk_init_hard(arena);
+		if (lchunk == NULL)
+			return (NULL);
+	}
+
+	lchunk_avail_tree_insert(&arena->lchunks_avail, lchunk);
+
+	return lchunk;
+}
 
 /* 释放一个lchunk.过程是先放在arena->spare,然后再释放 */
 static void
