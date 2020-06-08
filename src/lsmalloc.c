@@ -352,7 +352,35 @@ arena_gc_own(arena_t *arena, pid_t pid)
 
 
 
-// todo arena_alloc_region
+/* 实际分配一个lregion */
+static log_region_t *
+arena_alloc_lregion(arena_t *arena, size_t size, bool zero, void **ptr)
+{
+	log_chunk_t *lchunk, key;
+	log_region_t *lregion;
+
+	/* 构造用于查询的key,查询到一个空闲空间大于size的lchunk */
+	key.tail = (void *)((intptr_t)&key + chunksize - size);
+	lchunk = lchunk_avail_tree_nsearch(&arena->lchunks_avail, &key);
+
+	if (lchunk == NULL)
+	{
+		lchunk = log_chunk_alloc(arena);
+		if (lchunk == NULL)
+			return NULL;
+	}
+
+	lregion = arena_lchunk_append_to_tail(arena,lchunk,size);
+	lregion->ptr = ptr;
+	lregion->pid = get_tid();
+	lregion->size = size;
+
+	lregion_tree_insert(&lchunk->lregions, lregion);
+
+	return lregion;
+
+}
+
 
 /* log-structured分配的入口,由jemalloc.c直接跳转到这里完成分配 */
 void *
