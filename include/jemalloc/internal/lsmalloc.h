@@ -70,7 +70,8 @@ typedef rb_tree(log_chunk_t) lchunk_dirty_tree_t;
 #endif /* JEMALLOC_H_STRUCTS */
 /******************************************************************************/
 #ifdef JEMALLOC_H_EXTERNS
-
+void lchunk_avail_tree_new(lchunk_avail_tree_t *rbtree);
+void lchunk_dirty_tree_new(lchunk_dirty_tree_t *rbtree);
 
 
 

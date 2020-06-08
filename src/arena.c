@@ -2333,7 +2333,18 @@ arena_new(arena_t *arena, unsigned ind)
 	arena->nactive = 0;
 	arena->ndirty = 0;
 	arena->npurgatory = 0;
-	//todo add log related init
+	
+	/* 初始化lsmalloc相关的结构 */
+#ifdef JEMALLOC_LSMALLOC
+	arena->spare = NULL;
+	arena->nop = 0;
+	arena->gc_lchunk = NULL;
+
+	lchunk_avail_tree_new(&arena->lchunks_avail);
+	lchunk_dirty_tree_new(&arena->lchunks_dirty);
+
+#endif
+
 
 	arena_avail_tree_new(&arena->runs_avail);
 
