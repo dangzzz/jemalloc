@@ -206,7 +206,7 @@ static void
 log_chunk_dealloc(arena_t *arena, log_chunk_t *lchunk)
 {
 
-	lchhunk_dirty_tree_remove(&arena->lchunks_dirty, lchunk);
+	lchunk_dirty_tree_remove(&arena->lchunks_dirty, lchunk);
 
 	if (arena->lspare != NULL)
 	{
@@ -258,7 +258,7 @@ arena_gc_mark_lchunk(arena_t *arena)
 	return;
 }
 
-/* 将lregion以appende的形式复制到lchunk */
+/* 将lregion以append的形式复制到lchunk */
 static inline void 
 arena_lchunk_append_copy(arena_t *arena, log_chunk_t *lchunk, log_region_t *lregion, size_t size)
 {
