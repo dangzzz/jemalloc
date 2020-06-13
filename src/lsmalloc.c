@@ -381,6 +381,61 @@ arena_alloc_lregion(arena_t *arena, size_t size, bool zero, void **ptr)
 
 }
 
+/* 判断是否需要做gc,如果需要就开始gc*/
+static inline void
+log_maybe_purge(arena_t *arena)
+{
+
+	if (arena->nop >= GC_NOP)
+	{
+		pid_t pid = gte_tid();
+		arena_gc_mark_lchunk(arena);
+		arena_gc_own(arena, pid);
+		arena->nop = 0;
+	}
+	return;
+}
+
+
+/* free的过程就是把lregion的脏位设置为脏 */
+static void
+arena_lregion_dalloc(arena_t *arena, log_region_t *lregion, bool dirty, bool cleaned)
+{
+
+	lregion->attr |= 1UL;
+	// 判断是否当前的操作引起需要gc
+	log_maybe_purge(arena);
+
+
+}
+
+
+/* 定位到需要free的lregion */
+void 
+arena_log_dealloc_locked(arena_t *arena, log_chunk_t *lchunk, void *ptr)
+{
+
+	log_region_t *lregion;
+	lregion = (log_region_t *)((intptr_t)ptr - sizeof(log_region_t));
+	lchunk->size_dirty += lregion->size;
+	arena_lregion_dalloc(arena, lregion, true, false);
+}
+
+
+
+
+/* free的具体执行入口,该函数只是提供锁的封装 */
+void 
+arena_log_dealloc(arena_t *arena, log_chunk_t *lchunk, void *ptr)
+{
+
+	malloc_mutex_lock(&arena->lock);
+	arena->nop++;
+	arena_log_dealloc_locked(arena, lchunk, ptr);
+	malloc_mutex_unlock(&arena->lock);
+}
+
+
 
 /* log-structured分配的入口,由jemalloc.c直接跳转到这里完成分配 */
 void *

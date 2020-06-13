@@ -13,6 +13,9 @@ typedef struct log_region_s log_region_t;
 #define GC_TAIL_RATE		0.9
 
 
+#define GC_NOP 				1000
+
+
 #endif /* JEMALLOC_H_TYPES */
 /******************************************************************************/
 #ifdef JEMALLOC_H_STRUCTS
