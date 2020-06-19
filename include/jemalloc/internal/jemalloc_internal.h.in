@@ -65,6 +65,8 @@ typedef intptr_t ssize_t;
 #include <valgrind/memcheck.h>
 #endif
 
+#define JEMALLOC_LSMALLOC
+
 #define	JEMALLOC_NO_DEMANGLE
 #ifdef JEMALLOC_JET
 #  define JEMALLOC_N(n) jet_##n
@@ -227,7 +229,6 @@ static const bool config_ivsalloc =
 /******************************************************************************/
 #define	JEMALLOC_H_TYPES
 
-#define JEMALLOC_LSMALLOC
 
 #include "jemalloc/internal/jemalloc_internal_macros.h"
 
@@ -782,6 +783,68 @@ malloc_tsd_protos(JEMALLOC_ATTR(unused), thread_allocated, thread_allocated_t)
 #endif
 
 #if (defined(JEMALLOC_ENABLE_INLINE) || defined(JEMALLOC_C_))
+
+#ifdef JEMALLOC_LSMALLOC
+
+JEMALLOC_ALWAYS_INLINE void
+ildalloct(void *ptr, bool try_tcache)
+{
+	arena_chunk_t *chunk;
+
+	assert(ptr != NULL);
+
+	chunk = (arena_chunk_t *)CHUNK_ADDR2BASE(ptr);
+	
+	if (chunk != ptr){
+		/* logchunk在lchunk和chunk中偏移一致 */
+		if(chunk->logchunk){
+			log_chunk_t *lchunk = (log_chunk_t *)chunk;
+			arena_log_dealloc(lchunk->arena,lchunk,ptr);
+		}else
+		{
+			arena_dalloc(chunk->arena, chunk, ptr, try_tcache);
+		}
+	}
+	else
+		huge_dalloc(ptr, true);
+}
+
+
+JEMALLOC_ALWAYS_INLINE void
+ilqalloct(void *ptr, bool try_tcache)
+{
+	ildalloct(ptr, try_tcache);
+}
+
+JEMALLOC_ALWAYS_INLINE void
+ilqalloc(void *ptr)
+{
+
+	ilqalloct(ptr, true);
+}
+
+JEMALLOC_ALWAYS_INLINE void *
+ilmalloct(size_t size, bool try_tcache, arena_t *arena, void **ptr)
+{
+
+	assert(size != 0);
+
+	if (size <= arena_maxclass)
+		return (arena_lmalloc(arena, size, false, try_tcache, ptr));
+	else
+		return (huge_malloc(size, false, huge_dss_prec_get(arena)));
+}
+
+JEMALLOC_ALWAYS_INLINE void *
+ilmalloc(size_t size, void **ptr)
+{
+
+	return (ilmalloct(size, true, NULL,ptr));
+}
+
+#endif
+
+
 JEMALLOC_ALWAYS_INLINE void *
 imalloct(size_t size, bool try_tcache, arena_t *arena)
 {

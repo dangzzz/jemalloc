@@ -921,7 +921,6 @@ imalloc_prof(size_t usize, prof_thr_cnt_t *cnt)
 void *
 log_malloc(size_t size,void **ptr){
 	void *ret;
-	size_t usize JEMALLOC_CC_SILENCE_INIT(0);
 
 	if (size == 0)
 		size = 1;
@@ -1329,8 +1328,7 @@ je_realloc(void *ptr, size_t size)
 JEMALLOC_INLINE_C void
 ilfree(void *ptr)
 {
-	size_t usize;
-	UNUSED size_t rzsize JEMALLOC_CC_SILENCE_INIT(0);
+
 
 	assert(ptr != NULL);
 	assert(malloc_initialized || IS_INITIALIZER);

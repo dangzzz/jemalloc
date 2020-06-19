@@ -44,7 +44,7 @@ typedef rb_tree(log_region_t) lregion_tree_t;
 
 /* 简称lchunk */
 struct log_chunk_s{
-	/* 标识是否是lchunk */
+	/* 标识是否是lchunk,必须是第一个成员 */
 	bool					logchunk;
 
 	/* 保存所有log的树,对应lregion->lregion_link*/

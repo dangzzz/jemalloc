@@ -163,7 +163,7 @@ typedef ql_head(arena_chunk_map_t) arena_chunk_mapelms_t;
 /* Arena chunk header. */
 struct arena_chunk_s {
 #ifdef JEMALLOC_LSMALLOC
-	/* 标识是否是lchunk */
+	/* 标识是否是lchunk,必须是第一个成员 */
 	bool					logchunk;
 #endif
 	/* Arena that owns the chunk. */

@@ -4,16 +4,11 @@
 /******************************************************************************/
 /* Data. */
 
-
-
 /******************************************************************************/
 /*
  * Function prototypes for static functions that are referenced prior to
  * definition.
  */
-
-
-
 
 /******************************************************************************/
 /* Generate red-black tree functions. */
@@ -33,9 +28,1417 @@ lregion_comp(log_region_t *a, log_region_t *b)
 	return ret;
 }
 
-rb_gen(UNUSED, lregion_tree_, lregion_tree_t, log_region_t,
-	   lregion_link, lregion_comp)
+//begin
 
+void lregion_tree_new(lregion_tree_t *rbtree)
+{
+	do
+	{
+		(rbtree)->rbt_root = &(rbtree)->rbt_nil;
+		do
+		{
+			do
+			{
+				((&(rbtree)->rbt_nil))->lregion_link.rbn_left = &(rbtree)->rbt_nil;
+			} while (0);
+			do
+			{
+				((&(rbtree)->rbt_nil))->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t) & (rbtree)->rbt_nil) | (((uintptr_t)((&(rbtree)->rbt_nil))->lregion_link.rbn_right_red) & ((size_t)1)));
+			} while (0);
+			do
+			{
+				((&(rbtree)->rbt_nil))->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)((&(rbtree)->rbt_nil))->lregion_link.rbn_right_red) | ((size_t)1));
+			} while (0);
+		} while (0);
+		do
+		{
+			(&(rbtree)->rbt_nil)->lregion_link.rbn_right_red = (log_region_t *)(((intptr_t)(&(rbtree)->rbt_nil)->lregion_link.rbn_right_red) & ((ssize_t)-2));
+		} while (0);
+	} while (0);
+}
+log_region_t *lregion_tree_first(lregion_tree_t *rbtree)
+{
+	log_region_t *ret;
+	do
+	{
+		(ret) = (rbtree->rbt_root);
+		if ((ret) != &(rbtree)->rbt_nil)
+		{
+			for (; (((ret))->lregion_link.rbn_left) != &(rbtree)->rbt_nil; (ret) = (((ret))->lregion_link.rbn_left))
+			{
+			}
+		}
+	} while (0);
+	if (ret == &rbtree->rbt_nil)
+	{
+		ret =
+
+			((void *)0)
+
+			;
+	}
+	return (ret);
+}
+log_region_t *lregion_tree_last(lregion_tree_t *rbtree)
+{
+	log_region_t *ret;
+	do
+	{
+		(ret) = (rbtree->rbt_root);
+		if ((ret) != &(rbtree)->rbt_nil)
+		{
+			for (; ((log_region_t *)(((intptr_t)((ret))->lregion_link.rbn_right_red) & ((ssize_t)-2))) != &(rbtree)->rbt_nil; (ret) = ((log_region_t *)(((intptr_t)((ret))->lregion_link.rbn_right_red) & ((ssize_t)-2))))
+			{
+			}
+		}
+	} while (0);
+	if (ret == &rbtree->rbt_nil)
+	{
+		ret =
+
+			((void *)0)
+
+			;
+	}
+	return (ret);
+}
+log_region_t *lregion_tree_next(lregion_tree_t *rbtree, log_region_t *node)
+{
+	log_region_t *ret;
+	if (((log_region_t *)(((intptr_t)(node)->lregion_link.rbn_right_red) & ((ssize_t)-2))) != &rbtree->rbt_nil)
+	{
+		do
+		{
+			(ret) = (((log_region_t *)(((intptr_t)(node)->lregion_link.rbn_right_red) & ((ssize_t)-2))));
+			if ((ret) != &(rbtree)->rbt_nil)
+			{
+				for (; (((ret))->lregion_link.rbn_left) != &(rbtree)->rbt_nil; (ret) = (((ret))->lregion_link.rbn_left))
+				{
+				}
+			}
+		} while (0);
+	}
+	else
+	{
+		log_region_t *tnode = rbtree->rbt_root;
+		do
+		{
+			if (config_debug && !(tnode != &rbtree->rbt_nil))
+			{
+				je_malloc_printf("<jemalloc>: %s:%d: Failed assertion: \"%s\"\n",
+								 "src/lsmalloc.c"
+
+								 ,
+								 37
+
+								 ,
+								 "tnode != &rbtree->rbt_nil");
+				abort();
+			}
+		} while (0);
+		ret = &rbtree->rbt_nil;
+		while (
+
+			1
+
+		)
+		{
+			int cmp = (lregion_comp)(node, tnode);
+			if (cmp < 0)
+			{
+				ret = tnode;
+				tnode = ((tnode)->lregion_link.rbn_left);
+			}
+			else if (cmp > 0)
+			{
+				tnode = ((log_region_t *)(((intptr_t)(tnode)->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+			}
+			else
+			{
+				break;
+			}
+			do
+			{
+				if (config_debug && !(tnode != &rbtree->rbt_nil))
+				{
+					je_malloc_printf("<jemalloc>: %s:%d: Failed assertion: \"%s\"\n",
+									 "src/lsmalloc.c"
+
+									 ,
+									 37
+
+									 ,
+									 "tnode != &rbtree->rbt_nil");
+					abort();
+				}
+			} while (0);
+		}
+	}
+	if (ret == &rbtree->rbt_nil)
+	{
+		ret = (
+
+			((void *)0)
+
+		);
+	}
+	return (ret);
+}
+log_region_t *lregion_tree_prev(lregion_tree_t *rbtree, log_region_t *node)
+{
+	log_region_t *ret;
+	if (((node)->lregion_link.rbn_left) != &rbtree->rbt_nil)
+	{
+		do
+		{
+			(ret) = (((node)->lregion_link.rbn_left));
+			if ((ret) != &(rbtree)->rbt_nil)
+			{
+				for (; ((log_region_t *)(((intptr_t)((ret))->lregion_link.rbn_right_red) & ((ssize_t)-2))) != &(rbtree)->rbt_nil; (ret) = ((log_region_t *)(((intptr_t)((ret))->lregion_link.rbn_right_red) & ((ssize_t)-2))))
+				{
+				}
+			}
+		} while (0);
+	}
+	else
+	{
+		log_region_t *tnode = rbtree->rbt_root;
+		do
+		{
+			if (config_debug && !(tnode != &rbtree->rbt_nil))
+			{
+				je_malloc_printf("<jemalloc>: %s:%d: Failed assertion: \"%s\"\n",
+								 "src/lsmalloc.c"
+
+								 ,
+								 37
+
+								 ,
+								 "tnode != &rbtree->rbt_nil");
+				abort();
+			}
+		} while (0);
+		ret = &rbtree->rbt_nil;
+		while (
+
+			1
+
+		)
+		{
+			int cmp = (lregion_comp)(node, tnode);
+			if (cmp < 0)
+			{
+				tnode = ((tnode)->lregion_link.rbn_left);
+			}
+			else if (cmp > 0)
+			{
+				ret = tnode;
+				tnode = ((log_region_t *)(((intptr_t)(tnode)->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+			}
+			else
+			{
+				break;
+			}
+			do
+			{
+				if (config_debug && !(tnode != &rbtree->rbt_nil))
+				{
+					je_malloc_printf("<jemalloc>: %s:%d: Failed assertion: \"%s\"\n",
+									 "src/lsmalloc.c"
+
+									 ,
+									 37
+
+									 ,
+									 "tnode != &rbtree->rbt_nil");
+					abort();
+				}
+			} while (0);
+		}
+	}
+	if (ret == &rbtree->rbt_nil)
+	{
+		ret = (
+
+			((void *)0)
+
+		);
+	}
+	return (ret);
+}
+log_region_t *lregion_tree_search(lregion_tree_t *rbtree, log_region_t *key)
+{
+	log_region_t *ret;
+	int cmp;
+	ret = rbtree->rbt_root;
+	while (ret != &rbtree->rbt_nil && (cmp = (lregion_comp)(key, ret)) != 0)
+	{
+		if (cmp < 0)
+		{
+			ret = ((ret)->lregion_link.rbn_left);
+		}
+		else
+		{
+			ret = ((log_region_t *)(((intptr_t)(ret)->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+		}
+	}
+	if (ret == &rbtree->rbt_nil)
+	{
+		ret = (
+
+			((void *)0)
+
+		);
+	}
+	return (ret);
+}
+log_region_t *lregion_tree_nsearch(lregion_tree_t *rbtree, log_region_t *key)
+{
+	log_region_t *ret;
+	log_region_t *tnode = rbtree->rbt_root;
+	ret = &rbtree->rbt_nil;
+	while (tnode != &rbtree->rbt_nil)
+	{
+		int cmp = (lregion_comp)(key, tnode);
+		if (cmp < 0)
+		{
+			ret = tnode;
+			tnode = ((tnode)->lregion_link.rbn_left);
+		}
+		else if (cmp > 0)
+		{
+			tnode = ((log_region_t *)(((intptr_t)(tnode)->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+		}
+		else
+		{
+			ret = tnode;
+			break;
+		}
+	}
+	if (ret == &rbtree->rbt_nil)
+	{
+		ret = (
+
+			((void *)0)
+
+		);
+	}
+	return (ret);
+}
+log_region_t *lregion_tree_psearch(lregion_tree_t *rbtree, log_region_t *key)
+{
+	log_region_t *ret;
+	log_region_t *tnode = rbtree->rbt_root;
+	ret = &rbtree->rbt_nil;
+	while (tnode != &rbtree->rbt_nil)
+	{
+		int cmp = (lregion_comp)(key, tnode);
+		if (cmp < 0)
+		{
+			tnode = ((tnode)->lregion_link.rbn_left);
+		}
+		else if (cmp > 0)
+		{
+			ret = tnode;
+			tnode = ((log_region_t *)(((intptr_t)(tnode)->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+		}
+		else
+		{
+			ret = tnode;
+			break;
+		}
+	}
+	if (ret == &rbtree->rbt_nil)
+	{
+		ret = (
+
+			((void *)0)
+
+		);
+	}
+	return (ret);
+}
+void lregion_tree_insert(lregion_tree_t *rbtree, log_region_t *node)
+{
+	struct
+	{
+		log_region_t *node;
+		int cmp;
+	} path[sizeof(void *) << 4], *pathp;
+	do
+	{
+		do
+		{
+			((node))->lregion_link.rbn_left = &(rbtree)->rbt_nil;
+		} while (0);
+		do
+		{
+			((node))->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t) & (rbtree)->rbt_nil) | (((uintptr_t)((node))->lregion_link.rbn_right_red) & ((size_t)1)));
+		} while (0);
+		do
+		{
+			((node))->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)((node))->lregion_link.rbn_right_red) | ((size_t)1));
+		} while (0);
+	} while (0);
+	path->node = rbtree->rbt_root;
+	for (pathp = path; pathp->node != &rbtree->rbt_nil; pathp++)
+	{
+		int cmp = pathp->cmp = lregion_comp(node, pathp->node);
+		do
+		{
+			if (config_debug && !(cmp != 0))
+			{
+				je_malloc_printf("<jemalloc>: %s:%d: Failed assertion: \"%s\"\n",
+								 "src/lsmalloc.c"
+
+								 ,
+								 37
+
+								 ,
+								 "cmp != 0");
+				abort();
+			}
+		} while (0);
+		if (cmp < 0)
+		{
+			pathp[1].node = ((pathp->node)->lregion_link.rbn_left);
+		}
+		else
+		{
+			pathp[1].node = ((log_region_t *)(((intptr_t)(pathp->node)->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+		}
+	}
+	pathp->node = node;
+	for (pathp--; (uintptr_t)pathp >= (uintptr_t)path; pathp--)
+	{
+		log_region_t *cnode = pathp->node;
+		if (pathp->cmp < 0)
+		{
+			log_region_t *left = pathp[1].node;
+			do
+			{
+				(cnode)->lregion_link.rbn_left = left;
+			} while (0);
+			if (((
+
+					_Bool
+
+					)(((uintptr_t)(left)->lregion_link.rbn_right_red) & ((size_t)1))))
+			{
+				log_region_t *leftleft = ((left)->lregion_link.rbn_left);
+				if (((
+
+						_Bool
+
+						)(((uintptr_t)(leftleft)->lregion_link.rbn_right_red) & ((size_t)1))))
+				{
+					log_region_t *tnode;
+					do
+					{
+						(leftleft)->lregion_link.rbn_right_red = (log_region_t *)(((intptr_t)(leftleft)->lregion_link.rbn_right_red) & ((ssize_t)-2));
+					} while (0);
+					do
+					{
+						(tnode) = (((cnode))->lregion_link.rbn_left);
+						do
+						{
+							((cnode))->lregion_link.rbn_left = ((log_region_t *)(((intptr_t)((tnode))->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+						} while (0);
+						do
+						{
+							((tnode))->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)(cnode)) | (((uintptr_t)((tnode))->lregion_link.rbn_right_red) & ((size_t)1)));
+						} while (0);
+					} while (0);
+					cnode = tnode;
+				}
+			}
+			else
+			{
+				return;
+			}
+		}
+		else
+		{
+			log_region_t *right = pathp[1].node;
+			do
+			{
+				(cnode)->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)right) | (((uintptr_t)(cnode)->lregion_link.rbn_right_red) & ((size_t)1)));
+			} while (0);
+			if (((
+
+					_Bool
+
+					)(((uintptr_t)(right)->lregion_link.rbn_right_red) & ((size_t)1))))
+			{
+				log_region_t *left = ((cnode)->lregion_link.rbn_left);
+				if (((
+
+						_Bool
+
+						)(((uintptr_t)(left)->lregion_link.rbn_right_red) & ((size_t)1))))
+				{
+					do
+					{
+						(left)->lregion_link.rbn_right_red = (log_region_t *)(((intptr_t)(left)->lregion_link.rbn_right_red) & ((ssize_t)-2));
+					} while (0);
+					do
+					{
+						(right)->lregion_link.rbn_right_red = (log_region_t *)(((intptr_t)(right)->lregion_link.rbn_right_red) & ((ssize_t)-2));
+					} while (0);
+					do
+					{
+						(cnode)->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)(cnode)->lregion_link.rbn_right_red) | ((size_t)1));
+					} while (0);
+				}
+				else
+				{
+					log_region_t *tnode;
+
+					_Bool
+
+						tred = ((
+
+							_Bool
+
+							)(((uintptr_t)(cnode)->lregion_link.rbn_right_red) & ((size_t)1)));
+					do
+					{
+						(tnode) = ((log_region_t *)(((intptr_t)((cnode))->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+						do
+						{
+							((cnode))->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)(((tnode))->lregion_link.rbn_left)) | (((uintptr_t)((cnode))->lregion_link.rbn_right_red) & ((size_t)1)));
+						} while (0);
+						do
+						{
+							((tnode))->lregion_link.rbn_left = (cnode);
+						} while (0);
+					} while (0);
+					do
+					{
+						(tnode)->lregion_link.rbn_right_red = (log_region_t *)((((intptr_t)(tnode)->lregion_link.rbn_right_red) & ((ssize_t)-2)) | ((ssize_t)tred));
+					} while (0);
+					do
+					{
+						(cnode)->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)(cnode)->lregion_link.rbn_right_red) | ((size_t)1));
+					} while (0);
+					cnode = tnode;
+				}
+			}
+			else
+			{
+				return;
+			}
+		}
+		pathp->node = cnode;
+	}
+	rbtree->rbt_root = path->node;
+	do
+	{
+		(rbtree->rbt_root)->lregion_link.rbn_right_red = (log_region_t *)(((intptr_t)(rbtree->rbt_root)->lregion_link.rbn_right_red) & ((ssize_t)-2));
+	} while (0);
+}
+void lregion_tree_remove(lregion_tree_t *rbtree, log_region_t *node)
+{
+	struct
+	{
+		log_region_t *node;
+		int cmp;
+	} * pathp, *nodep, path[sizeof(void *) << 4];
+	nodep =
+
+		((void *)0)
+
+		;
+	path->node = rbtree->rbt_root;
+	for (pathp = path; pathp->node != &rbtree->rbt_nil; pathp++)
+	{
+		int cmp = pathp->cmp = lregion_comp(node, pathp->node);
+		if (cmp < 0)
+		{
+			pathp[1].node = ((pathp->node)->lregion_link.rbn_left);
+		}
+		else
+		{
+			pathp[1].node = ((log_region_t *)(((intptr_t)(pathp->node)->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+			if (cmp == 0)
+			{
+				pathp->cmp = 1;
+				nodep = pathp;
+				for (pathp++; pathp->node != &rbtree->rbt_nil; pathp++)
+				{
+					pathp->cmp = -1;
+					pathp[1].node = ((pathp->node)->lregion_link.rbn_left);
+				}
+				break;
+			}
+		}
+	}
+	do
+	{
+		if (config_debug && !(nodep->node == node))
+		{
+			je_malloc_printf("<jemalloc>: %s:%d: Failed assertion: \"%s\"\n",
+							 "src/lsmalloc.c"
+
+							 ,
+							 37
+
+							 ,
+							 "nodep->node == node");
+			abort();
+		}
+	} while (0);
+	pathp--;
+	if (pathp->node != node)
+	{
+
+		_Bool
+
+			tred = ((
+
+				_Bool
+
+				)(((uintptr_t)(pathp->node)->lregion_link.rbn_right_red) & ((size_t)1)));
+		do
+		{
+			(pathp->node)->lregion_link.rbn_right_red = (log_region_t *)((((intptr_t)(pathp->node)->lregion_link.rbn_right_red) & ((ssize_t)-2)) | ((ssize_t)((
+
+																																					   _Bool
+
+																																					   )(((uintptr_t)(node)->lregion_link.rbn_right_red) & ((size_t)1)))));
+		} while (0);
+		do
+		{
+			(pathp->node)->lregion_link.rbn_left = ((node)->lregion_link.rbn_left);
+		} while (0);
+		do
+		{
+			(pathp->node)->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)((log_region_t *)(((intptr_t)(node)->lregion_link.rbn_right_red) & ((ssize_t)-2)))) | (((uintptr_t)(pathp->node)->lregion_link.rbn_right_red) & ((size_t)1)));
+		} while (0);
+		do
+		{
+			(node)->lregion_link.rbn_right_red = (log_region_t *)((((intptr_t)(node)->lregion_link.rbn_right_red) & ((ssize_t)-2)) | ((ssize_t)tred));
+		} while (0);
+		nodep->node = pathp->node;
+		pathp->node = node;
+		if (nodep == path)
+		{
+			rbtree->rbt_root = nodep->node;
+		}
+		else
+		{
+			if (nodep[-1].cmp < 0)
+			{
+				do
+				{
+					(nodep[-1].node)->lregion_link.rbn_left = nodep->node;
+				} while (0);
+			}
+			else
+			{
+				do
+				{
+					(nodep[-1].node)->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)nodep->node) | (((uintptr_t)(nodep[-1].node)->lregion_link.rbn_right_red) & ((size_t)1)));
+				} while (0);
+			}
+		}
+	}
+	else
+	{
+		log_region_t *left = ((node)->lregion_link.rbn_left);
+		if (left != &rbtree->rbt_nil)
+		{
+			do
+			{
+				if (config_debug && !(((
+
+										  _Bool
+
+										  )(((uintptr_t)(node)->lregion_link.rbn_right_red) & ((size_t)1))) ==
+
+									  0
+
+									  ))
+				{
+					je_malloc_printf("<jemalloc>: %s:%d: Failed assertion: \"%s\"\n",
+									 "src/lsmalloc.c"
+
+									 ,
+									 37
+
+									 ,
+									 "rbtn_red_get(log_region_t, lregion_link, node) == false");
+					abort();
+				}
+			} while (0);
+			do
+			{
+				if (config_debug && !(((
+
+										_Bool
+
+										)(((uintptr_t)(left)->lregion_link.rbn_right_red) & ((size_t)1)))))
+				{
+					je_malloc_printf("<jemalloc>: %s:%d: Failed assertion: \"%s\"\n",
+									 "src/lsmalloc.c"
+
+									 ,
+									 37
+
+									 ,
+									 "rbtn_red_get(log_region_t, lregion_link, left)");
+					abort();
+				}
+			} while (0);
+			do
+			{
+				(left)->lregion_link.rbn_right_red = (log_region_t *)(((intptr_t)(left)->lregion_link.rbn_right_red) & ((ssize_t)-2));
+			} while (0);
+			if (pathp == path)
+			{
+				rbtree->rbt_root = left;
+			}
+			else
+			{
+				if (pathp[-1].cmp < 0)
+				{
+					do
+					{
+						(pathp[-1].node)->lregion_link.rbn_left = left;
+					} while (0);
+				}
+				else
+				{
+					do
+					{
+						(pathp[-1].node)->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)left) | (((uintptr_t)(pathp[-1].node)->lregion_link.rbn_right_red) & ((size_t)1)));
+					} while (0);
+				}
+			}
+			return;
+		}
+		else if (pathp == path)
+		{
+			rbtree->rbt_root = &rbtree->rbt_nil;
+			return;
+		}
+	}
+	if (((
+
+			_Bool
+
+			)(((uintptr_t)(pathp->node)->lregion_link.rbn_right_red) & ((size_t)1))))
+	{
+		do
+		{
+			if (config_debug && !(pathp[-1].cmp < 0))
+			{
+				je_malloc_printf("<jemalloc>: %s:%d: Failed assertion: \"%s\"\n",
+								 "src/lsmalloc.c"
+
+								 ,
+								 37
+
+								 ,
+								 "pathp[-1].cmp < 0");
+				abort();
+			}
+		} while (0);
+		do
+		{
+			(pathp[-1].node)->lregion_link.rbn_left = &rbtree->rbt_nil;
+		} while (0);
+		return;
+	}
+	pathp->node = &rbtree->rbt_nil;
+	for (pathp--; (uintptr_t)pathp >= (uintptr_t)path; pathp--)
+	{
+		do
+		{
+			if (config_debug && !(pathp->cmp != 0))
+			{
+				je_malloc_printf("<jemalloc>: %s:%d: Failed assertion: \"%s\"\n",
+								 "src/lsmalloc.c"
+
+								 ,
+								 37
+
+								 ,
+								 "pathp->cmp != 0");
+				abort();
+			}
+		} while (0);
+		if (pathp->cmp < 0)
+		{
+			do
+			{
+				(pathp->node)->lregion_link.rbn_left = pathp[1].node;
+			} while (0);
+			do
+			{
+				if (config_debug && !(((
+
+										  _Bool
+
+										  )(((uintptr_t)(pathp[1].node)->lregion_link.rbn_right_red) & ((size_t)1))) ==
+
+									  0
+
+									  ))
+				{
+					je_malloc_printf("<jemalloc>: %s:%d: Failed assertion: \"%s\"\n",
+									 "src/lsmalloc.c"
+
+									 ,
+									 37
+
+									 ,
+									 "rbtn_red_get(log_region_t, lregion_link, pathp[1].node) == false");
+					abort();
+				}
+			} while (0);
+			if (((
+
+					_Bool
+
+					)(((uintptr_t)(pathp->node)->lregion_link.rbn_right_red) & ((size_t)1))))
+			{
+				log_region_t *right = ((log_region_t *)(((intptr_t)(pathp->node)->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+				log_region_t *rightleft = ((right)->lregion_link.rbn_left);
+				log_region_t *tnode;
+				if (((
+
+						_Bool
+
+						)(((uintptr_t)(rightleft)->lregion_link.rbn_right_red) & ((size_t)1))))
+				{
+					do
+					{
+						(pathp->node)->lregion_link.rbn_right_red = (log_region_t *)(((intptr_t)(pathp->node)->lregion_link.rbn_right_red) & ((ssize_t)-2));
+					} while (0);
+					do
+					{
+						(tnode) = (((right))->lregion_link.rbn_left);
+						do
+						{
+							((right))->lregion_link.rbn_left = ((log_region_t *)(((intptr_t)((tnode))->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+						} while (0);
+						do
+						{
+							((tnode))->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)(right)) | (((uintptr_t)((tnode))->lregion_link.rbn_right_red) & ((size_t)1)));
+						} while (0);
+					} while (0);
+					do
+					{
+						(pathp->node)->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)tnode) | (((uintptr_t)(pathp->node)->lregion_link.rbn_right_red) & ((size_t)1)));
+					} while (0);
+					do
+					{
+						(tnode) = ((log_region_t *)(((intptr_t)((pathp->node))->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+						do
+						{
+							((pathp->node))->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)(((tnode))->lregion_link.rbn_left)) | (((uintptr_t)((pathp->node))->lregion_link.rbn_right_red) & ((size_t)1)));
+						} while (0);
+						do
+						{
+							((tnode))->lregion_link.rbn_left = (pathp->node);
+						} while (0);
+					} while (0);
+				}
+				else
+				{
+					do
+					{
+						(tnode) = ((log_region_t *)(((intptr_t)((pathp->node))->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+						do
+						{
+							((pathp->node))->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)(((tnode))->lregion_link.rbn_left)) | (((uintptr_t)((pathp->node))->lregion_link.rbn_right_red) & ((size_t)1)));
+						} while (0);
+						do
+						{
+							((tnode))->lregion_link.rbn_left = (pathp->node);
+						} while (0);
+					} while (0);
+				}
+				do
+				{
+					if (config_debug && !((uintptr_t)pathp > (uintptr_t)path))
+					{
+						je_malloc_printf("<jemalloc>: %s:%d: Failed assertion: \"%s\"\n",
+										 "src/lsmalloc.c"
+
+										 ,
+										 37
+
+										 ,
+										 "(uintptr_t)pathp > (uintptr_t)path");
+						abort();
+					}
+				} while (0);
+				if (pathp[-1].cmp < 0)
+				{
+					do
+					{
+						(pathp[-1].node)->lregion_link.rbn_left = tnode;
+					} while (0);
+				}
+				else
+				{
+					do
+					{
+						(pathp[-1].node)->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)tnode) | (((uintptr_t)(pathp[-1].node)->lregion_link.rbn_right_red) & ((size_t)1)));
+					} while (0);
+				}
+				return;
+			}
+			else
+			{
+				log_region_t *right = ((log_region_t *)(((intptr_t)(pathp->node)->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+				log_region_t *rightleft = ((right)->lregion_link.rbn_left);
+				if (((
+
+						_Bool
+
+						)(((uintptr_t)(rightleft)->lregion_link.rbn_right_red) & ((size_t)1))))
+				{
+					log_region_t *tnode;
+					do
+					{
+						(rightleft)->lregion_link.rbn_right_red = (log_region_t *)(((intptr_t)(rightleft)->lregion_link.rbn_right_red) & ((ssize_t)-2));
+					} while (0);
+					do
+					{
+						(tnode) = (((right))->lregion_link.rbn_left);
+						do
+						{
+							((right))->lregion_link.rbn_left = ((log_region_t *)(((intptr_t)((tnode))->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+						} while (0);
+						do
+						{
+							((tnode))->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)(right)) | (((uintptr_t)((tnode))->lregion_link.rbn_right_red) & ((size_t)1)));
+						} while (0);
+					} while (0);
+					do
+					{
+						(pathp->node)->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)tnode) | (((uintptr_t)(pathp->node)->lregion_link.rbn_right_red) & ((size_t)1)));
+					} while (0);
+					do
+					{
+						(tnode) = ((log_region_t *)(((intptr_t)((pathp->node))->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+						do
+						{
+							((pathp->node))->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)(((tnode))->lregion_link.rbn_left)) | (((uintptr_t)((pathp->node))->lregion_link.rbn_right_red) & ((size_t)1)));
+						} while (0);
+						do
+						{
+							((tnode))->lregion_link.rbn_left = (pathp->node);
+						} while (0);
+					} while (0);
+					if (pathp == path)
+					{
+						rbtree->rbt_root = tnode;
+					}
+					else
+					{
+						if (pathp[-1].cmp < 0)
+						{
+							do
+							{
+								(pathp[-1].node)->lregion_link.rbn_left = tnode;
+							} while (0);
+						}
+						else
+						{
+							do
+							{
+								(pathp[-1].node)->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)tnode) | (((uintptr_t)(pathp[-1].node)->lregion_link.rbn_right_red) & ((size_t)1)));
+							} while (0);
+						}
+					}
+					return;
+				}
+				else
+				{
+					log_region_t *tnode;
+					do
+					{
+						(pathp->node)->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)(pathp->node)->lregion_link.rbn_right_red) | ((size_t)1));
+					} while (0);
+					do
+					{
+						(tnode) = ((log_region_t *)(((intptr_t)((pathp->node))->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+						do
+						{
+							((pathp->node))->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)(((tnode))->lregion_link.rbn_left)) | (((uintptr_t)((pathp->node))->lregion_link.rbn_right_red) & ((size_t)1)));
+						} while (0);
+						do
+						{
+							((tnode))->lregion_link.rbn_left = (pathp->node);
+						} while (0);
+					} while (0);
+					pathp->node = tnode;
+				}
+			}
+		}
+		else
+		{
+			log_region_t *left;
+			do
+			{
+				(pathp->node)->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)pathp[1].node) | (((uintptr_t)(pathp->node)->lregion_link.rbn_right_red) & ((size_t)1)));
+			} while (0);
+			left = ((pathp->node)->lregion_link.rbn_left);
+			if (((
+
+					_Bool
+
+					)(((uintptr_t)(left)->lregion_link.rbn_right_red) & ((size_t)1))))
+			{
+				log_region_t *tnode;
+				log_region_t *leftright = ((log_region_t *)(((intptr_t)(left)->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+				log_region_t *leftrightleft = ((leftright)->lregion_link.rbn_left);
+				if (((
+
+						_Bool
+
+						)(((uintptr_t)(leftrightleft)->lregion_link.rbn_right_red) & ((size_t)1))))
+				{
+					log_region_t *unode;
+					do
+					{
+						(leftrightleft)->lregion_link.rbn_right_red = (log_region_t *)(((intptr_t)(leftrightleft)->lregion_link.rbn_right_red) & ((ssize_t)-2));
+					} while (0);
+					do
+					{
+						(unode) = (((pathp->node))->lregion_link.rbn_left);
+						do
+						{
+							((pathp->node))->lregion_link.rbn_left = ((log_region_t *)(((intptr_t)((unode))->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+						} while (0);
+						do
+						{
+							((unode))->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)(pathp->node)) | (((uintptr_t)((unode))->lregion_link.rbn_right_red) & ((size_t)1)));
+						} while (0);
+					} while (0);
+					do
+					{
+						(tnode) = (((pathp->node))->lregion_link.rbn_left);
+						do
+						{
+							((pathp->node))->lregion_link.rbn_left = ((log_region_t *)(((intptr_t)((tnode))->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+						} while (0);
+						do
+						{
+							((tnode))->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)(pathp->node)) | (((uintptr_t)((tnode))->lregion_link.rbn_right_red) & ((size_t)1)));
+						} while (0);
+					} while (0);
+					do
+					{
+						(unode)->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)tnode) | (((uintptr_t)(unode)->lregion_link.rbn_right_red) & ((size_t)1)));
+					} while (0);
+					do
+					{
+						(tnode) = ((log_region_t *)(((intptr_t)((unode))->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+						do
+						{
+							((unode))->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)(((tnode))->lregion_link.rbn_left)) | (((uintptr_t)((unode))->lregion_link.rbn_right_red) & ((size_t)1)));
+						} while (0);
+						do
+						{
+							((tnode))->lregion_link.rbn_left = (unode);
+						} while (0);
+					} while (0);
+				}
+				else
+				{
+					do
+					{
+						if (config_debug && !(leftright != &rbtree->rbt_nil))
+						{
+							je_malloc_printf("<jemalloc>: %s:%d: Failed assertion: \"%s\"\n",
+											 "src/lsmalloc.c"
+
+											 ,
+											 37
+
+											 ,
+											 "leftright != &rbtree->rbt_nil");
+							abort();
+						}
+					} while (0);
+					do
+					{
+						(leftright)->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)(leftright)->lregion_link.rbn_right_red) | ((size_t)1));
+					} while (0);
+					do
+					{
+						(tnode) = (((pathp->node))->lregion_link.rbn_left);
+						do
+						{
+							((pathp->node))->lregion_link.rbn_left = ((log_region_t *)(((intptr_t)((tnode))->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+						} while (0);
+						do
+						{
+							((tnode))->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)(pathp->node)) | (((uintptr_t)((tnode))->lregion_link.rbn_right_red) & ((size_t)1)));
+						} while (0);
+					} while (0);
+					do
+					{
+						(tnode)->lregion_link.rbn_right_red = (log_region_t *)(((intptr_t)(tnode)->lregion_link.rbn_right_red) & ((ssize_t)-2));
+					} while (0);
+				}
+				if (pathp == path)
+				{
+					rbtree->rbt_root = tnode;
+				}
+				else
+				{
+					if (pathp[-1].cmp < 0)
+					{
+						do
+						{
+							(pathp[-1].node)->lregion_link.rbn_left = tnode;
+						} while (0);
+					}
+					else
+					{
+						do
+						{
+							(pathp[-1].node)->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)tnode) | (((uintptr_t)(pathp[-1].node)->lregion_link.rbn_right_red) & ((size_t)1)));
+						} while (0);
+					}
+				}
+				return;
+			}
+			else if (((
+
+						 _Bool
+
+						 )(((uintptr_t)(pathp->node)->lregion_link.rbn_right_red) & ((size_t)1))))
+			{
+				log_region_t *leftleft = ((left)->lregion_link.rbn_left);
+				if (((
+
+						_Bool
+
+						)(((uintptr_t)(leftleft)->lregion_link.rbn_right_red) & ((size_t)1))))
+				{
+					log_region_t *tnode;
+					do
+					{
+						(pathp->node)->lregion_link.rbn_right_red = (log_region_t *)(((intptr_t)(pathp->node)->lregion_link.rbn_right_red) & ((ssize_t)-2));
+					} while (0);
+					do
+					{
+						(left)->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)(left)->lregion_link.rbn_right_red) | ((size_t)1));
+					} while (0);
+					do
+					{
+						(leftleft)->lregion_link.rbn_right_red = (log_region_t *)(((intptr_t)(leftleft)->lregion_link.rbn_right_red) & ((ssize_t)-2));
+					} while (0);
+					do
+					{
+						(tnode) = (((pathp->node))->lregion_link.rbn_left);
+						do
+						{
+							((pathp->node))->lregion_link.rbn_left = ((log_region_t *)(((intptr_t)((tnode))->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+						} while (0);
+						do
+						{
+							((tnode))->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)(pathp->node)) | (((uintptr_t)((tnode))->lregion_link.rbn_right_red) & ((size_t)1)));
+						} while (0);
+					} while (0);
+					do
+					{
+						if (config_debug && !((uintptr_t)pathp > (uintptr_t)path))
+						{
+							je_malloc_printf("<jemalloc>: %s:%d: Failed assertion: \"%s\"\n",
+											 "src/lsmalloc.c"
+
+											 ,
+											 37
+
+											 ,
+											 "(uintptr_t)pathp > (uintptr_t)path");
+							abort();
+						}
+					} while (0);
+					if (pathp[-1].cmp < 0)
+					{
+						do
+						{
+							(pathp[-1].node)->lregion_link.rbn_left = tnode;
+						} while (0);
+					}
+					else
+					{
+						do
+						{
+							(pathp[-1].node)->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)tnode) | (((uintptr_t)(pathp[-1].node)->lregion_link.rbn_right_red) & ((size_t)1)));
+						} while (0);
+					}
+					return;
+				}
+				else
+				{
+					do
+					{
+						(left)->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)(left)->lregion_link.rbn_right_red) | ((size_t)1));
+					} while (0);
+					do
+					{
+						(pathp->node)->lregion_link.rbn_right_red = (log_region_t *)(((intptr_t)(pathp->node)->lregion_link.rbn_right_red) & ((ssize_t)-2));
+					} while (0);
+					return;
+				}
+			}
+			else
+			{
+				log_region_t *leftleft = ((left)->lregion_link.rbn_left);
+				if (((
+
+						_Bool
+
+						)(((uintptr_t)(leftleft)->lregion_link.rbn_right_red) & ((size_t)1))))
+				{
+					log_region_t *tnode;
+					do
+					{
+						(leftleft)->lregion_link.rbn_right_red = (log_region_t *)(((intptr_t)(leftleft)->lregion_link.rbn_right_red) & ((ssize_t)-2));
+					} while (0);
+					do
+					{
+						(tnode) = (((pathp->node))->lregion_link.rbn_left);
+						do
+						{
+							((pathp->node))->lregion_link.rbn_left = ((log_region_t *)(((intptr_t)((tnode))->lregion_link.rbn_right_red) & ((ssize_t)-2)));
+						} while (0);
+						do
+						{
+							((tnode))->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)(pathp->node)) | (((uintptr_t)((tnode))->lregion_link.rbn_right_red) & ((size_t)1)));
+						} while (0);
+					} while (0);
+					if (pathp == path)
+					{
+						rbtree->rbt_root = tnode;
+					}
+					else
+					{
+						if (pathp[-1].cmp < 0)
+						{
+							do
+							{
+								(pathp[-1].node)->lregion_link.rbn_left = tnode;
+							} while (0);
+						}
+						else
+						{
+							do
+							{
+								(pathp[-1].node)->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)tnode) | (((uintptr_t)(pathp[-1].node)->lregion_link.rbn_right_red) & ((size_t)1)));
+							} while (0);
+						}
+					}
+					return;
+				}
+				else
+				{
+					do
+					{
+						(left)->lregion_link.rbn_right_red = (log_region_t *)(((uintptr_t)(left)->lregion_link.rbn_right_red) | ((size_t)1));
+					} while (0);
+				}
+			}
+		}
+	}
+	rbtree->rbt_root = path->node;
+	do
+	{
+		if (config_debug && !(((
+
+								  _Bool
+
+								  )(((uintptr_t)(rbtree->rbt_root)->lregion_link.rbn_right_red) & ((size_t)1))) ==
+
+							  0
+
+							  ))
+		{
+			je_malloc_printf("<jemalloc>: %s:%d: Failed assertion: \"%s\"\n",
+							 "src/lsmalloc.c"
+
+							 ,
+							 37
+
+							 ,
+							 "rbtn_red_get(log_region_t, lregion_link, rbtree->rbt_root) == false");
+			abort();
+		}
+	} while (0);
+}
+log_region_t *lregion_tree_iter_recurse(lregion_tree_t *rbtree, log_region_t *node, log_region_t *(*cb)(lregion_tree_t *, log_region_t *, void *), void *arg)
+{
+	if (node == &rbtree->rbt_nil)
+	{
+		return (&rbtree->rbt_nil);
+	}
+	else
+	{
+		log_region_t *ret;
+		if ((ret = lregion_tree_iter_recurse(rbtree, ((node)->lregion_link.rbn_left), cb, arg)) != &rbtree->rbt_nil || (ret = cb(rbtree, node, arg)) !=
+
+																														   ((void *)0)
+
+		)
+		{
+			return (ret);
+		}
+		return (lregion_tree_iter_recurse(rbtree, ((log_region_t *)(((intptr_t)(node)->lregion_link.rbn_right_red) & ((ssize_t)-2))), cb, arg));
+	}
+}
+log_region_t *lregion_tree_iter_start(lregion_tree_t *rbtree, log_region_t *start, log_region_t *node, log_region_t *(*cb)(lregion_tree_t *, log_region_t *, void *), void *arg)
+{
+	int cmp = lregion_comp(start, node);
+	if (cmp < 0)
+	{
+		log_region_t *ret;
+		if ((ret = lregion_tree_iter_start(rbtree, start, ((node)->lregion_link.rbn_left), cb, arg)) != &rbtree->rbt_nil || (ret = cb(rbtree, node, arg)) !=
+
+																																((void *)0)
+
+		)
+		{
+			return (ret);
+		}
+		return (lregion_tree_iter_recurse(rbtree, ((log_region_t *)(((intptr_t)(node)->lregion_link.rbn_right_red) & ((ssize_t)-2))), cb, arg));
+	}
+	else if (cmp > 0)
+	{
+		return (lregion_tree_iter_start(rbtree, start, ((log_region_t *)(((intptr_t)(node)->lregion_link.rbn_right_red) & ((ssize_t)-2))), cb, arg));
+	}
+	else
+	{
+		log_region_t *ret;
+		if ((ret = cb(rbtree, node, arg)) !=
+
+			((void *)0)
+
+		)
+		{
+			return (ret);
+		}
+		return (lregion_tree_iter_recurse(rbtree, ((log_region_t *)(((intptr_t)(node)->lregion_link.rbn_right_red) & ((ssize_t)-2))), cb, arg));
+	}
+}
+log_region_t *lregion_tree_iter(lregion_tree_t *rbtree, log_region_t *start, log_region_t *(*cb)(lregion_tree_t *, log_region_t *, void *), void *arg)
+{
+	log_region_t *ret;
+	if (start !=
+
+		((void *)0)
+
+	)
+	{
+		ret = lregion_tree_iter_start(rbtree, start, rbtree->rbt_root, cb, arg);
+	}
+	else
+	{
+		ret = lregion_tree_iter_recurse(rbtree, rbtree->rbt_root, cb, arg);
+	}
+	if (ret == &rbtree->rbt_nil)
+	{
+		ret =
+
+			((void *)0)
+
+			;
+	}
+	return (ret);
+}
+log_region_t *lregion_tree_reverse_iter_recurse(lregion_tree_t *rbtree, log_region_t *node, log_region_t *(*cb)(lregion_tree_t *, log_region_t *, void *), void *arg)
+{
+	if (node == &rbtree->rbt_nil)
+	{
+		return (&rbtree->rbt_nil);
+	}
+	else
+	{
+		log_region_t *ret;
+		if ((ret = lregion_tree_reverse_iter_recurse(rbtree, ((log_region_t *)(((intptr_t)(node)->lregion_link.rbn_right_red) & ((ssize_t)-2))), cb, arg)) != &rbtree->rbt_nil || (ret = cb(rbtree, node, arg)) !=
+
+																																													  ((void *)0)
+
+		)
+		{
+			return (ret);
+		}
+		return (lregion_tree_reverse_iter_recurse(rbtree, ((node)->lregion_link.rbn_left), cb, arg));
+	}
+}
+log_region_t *lregion_tree_reverse_iter_start(lregion_tree_t *rbtree, log_region_t *start, log_region_t *node, log_region_t *(*cb)(lregion_tree_t *, log_region_t *, void *), void *arg)
+{
+	int cmp = lregion_comp(start, node);
+	if (cmp > 0)
+	{
+		log_region_t *ret;
+		if ((ret = lregion_tree_reverse_iter_start(rbtree, start, ((log_region_t *)(((intptr_t)(node)->lregion_link.rbn_right_red) & ((ssize_t)-2))), cb, arg)) != &rbtree->rbt_nil || (ret = cb(rbtree, node, arg)) !=
+
+																																														   ((void *)0)
+
+		)
+		{
+			return (ret);
+		}
+		return (lregion_tree_reverse_iter_recurse(rbtree, ((node)->lregion_link.rbn_left), cb, arg));
+	}
+	else if (cmp < 0)
+	{
+		return (lregion_tree_reverse_iter_start(rbtree, start, ((node)->lregion_link.rbn_left), cb, arg));
+	}
+	else
+	{
+		log_region_t *ret;
+		if ((ret = cb(rbtree, node, arg)) !=
+
+			((void *)0)
+
+		)
+		{
+			return (ret);
+		}
+		return (lregion_tree_reverse_iter_recurse(rbtree, ((node)->lregion_link.rbn_left), cb, arg));
+	}
+}
+log_region_t *lregion_tree_reverse_iter(lregion_tree_t *rbtree, log_region_t *start, log_region_t *(*cb)(lregion_tree_t *, log_region_t *, void *), void *arg)
+{
+	log_region_t *ret;
+	if (start !=
+
+		((void *)0)
+
+	)
+	{
+		ret = lregion_tree_reverse_iter_start(rbtree, start, rbtree->rbt_root, cb, arg);
+	}
+	else
+	{
+		ret = lregion_tree_reverse_iter_recurse(rbtree, rbtree->rbt_root, cb, arg);
+	}
+	if (ret == &rbtree->rbt_nil)
+	{
+		ret =
+
+			((void *)0)
+
+			;
+	}
+	return (ret);
+}
+
+//end
+
+//rb_gen(UNUSED, lregion_tree_, lregion_tree_t, log_region_t,
+//	   lregion_link, lregion_comp)
 
 /* 
  * 可用的lchunk在arena里管理的红黑树,对应arena->lchunks_avail.
@@ -65,14 +1468,13 @@ static inline int lchunk_avail_comp(log_chunk_t *a, log_chunk_t *b)
 }
 
 rb_gen(UNUSED, lchunk_avail_tree_, lchunk_avail_tree_t, log_chunk_t,
-       avail_link, lchunk_avail_comp)
+	   avail_link, lchunk_avail_comp)
 
-
-/* 
+	/* 
  * 等待垃圾回收的lchunk在arena里管理的红黑树,对应arena->lchunks_dirty.
  * lchunk_avail_comp提供了树的排序方式:按照起始地址大小排序.
  */
-static inline int lchunk_dirty_comp(log_chunk_t *a, log_chunk_t *b)
+	static inline int lchunk_dirty_comp(log_chunk_t *a, log_chunk_t *b)
 {
 	uintptr_t a_addr = (uintptr_t)a;
 	uintptr_t b_addr = (uintptr_t)b;
@@ -86,21 +1488,22 @@ static inline int lchunk_dirty_comp(log_chunk_t *a, log_chunk_t *b)
 rb_gen(UNUSED, lchunk_dirty_tree_, lchunk_dirty_tree_t, log_chunk_t,
 	   dirty_link, lchunk_dirty_comp)
 
-/******************************************************************************/
-/*Inline tool function*/
+	/******************************************************************************/
+	/*Inline tool function*/
 
-/* 返回当前线程的内核id,唯一确定一个线程 */
-static inline pid_t 
-get_tid(void)
+	/* 返回当前线程的内核id,唯一确定一个线程 */
+	static inline pid_t
+	get_tid(void)
 {
 	return syscall(__NR_gettid);
 }
 
 /* 返回lchunk的尾前数据大小 */
 static inline size_t
-chunksize_beforetail(log_chunk_t *lchunk){
-    intptr_t ret = (intptr_t)lchunk->tail - (intptr_t)lchunk;
-    return (size_t)ret;
+chunksize_beforetail(log_chunk_t *lchunk)
+{
+	intptr_t ret = (intptr_t)lchunk->tail - (intptr_t)lchunk;
+	return (size_t)ret;
 }
 
 /* 
@@ -108,7 +1511,7 @@ chunksize_beforetail(log_chunk_t *lchunk){
  * GC_TAIL_RATE
  * GC_DIRTY_RATE
  */
-static inline bool 
+static inline bool
 lchunk_need_gc(log_chunk_t *lchunk)
 {
 	if (((float)chunksize_beforetail(lchunk) / (float)chunksize) > GC_TAIL_RATE)
@@ -127,18 +1530,20 @@ lchunk_need_gc(log_chunk_t *lchunk)
  * 返回原来尾指针的位置.
  */
 static inline void *
-arena_lchunk_append_to_tail(arena_t *arena,log_chunk_t *lchunk,size_t size){
-    void *ret = lchunk->tail;
-    lchunk_avail_tree_remove(&arena->lchunks_avail, lchunk);
-    lchunk->tail = (void *)((intptr_t)lchunk->tail + size);
-    lchunk_avail_tree_insert(&arena->lchunks_avail, lchunk);
-    return ret;
+arena_lchunk_append_to_tail(arena_t *arena, log_chunk_t *lchunk, size_t size)
+{
+	void *ret = lchunk->tail;
+	lchunk_avail_tree_remove(&arena->lchunks_avail, lchunk);
+	lchunk->tail = (void *)((intptr_t)lchunk->tail + size);
+	lchunk_avail_tree_insert(&arena->lchunks_avail, lchunk);
+	return ret;
 }
 
 /* 将lregion指针加上头部大小,得到用户空间指针并返回 */
 static inline void *
-lregion_to_user_pointer(log_region_t *lregion){
-    return (void *)(((intptr_t)lregion) + sizeof(log_region_t));
+lregion_to_user_pointer(log_region_t *lregion)
+{
+	return (void *)(((intptr_t)lregion) + sizeof(log_region_t));
 }
 /******************************************************************************/
 
@@ -151,6 +1556,14 @@ arena_lchunk_init_spare(arena_t *arena)
 	lchunk = arena->lspare;
 	arena->lspare = NULL;
 
+	lchunk->size_dirty = 0;
+	lchunk->avail_link.rbn_left=0;
+	lchunk->avail_link.rbn_right_red=0;
+	lchunk->dirty_link.rbn_left=0;
+	lchunk->dirty_link.rbn_right_red=0;
+	lchunk->lregions.rbt_root=&lchunk->lregions.rbt_nil;
+	lchunk->tail = (void *)(((intptr_t)lchunk) + sizeof(log_chunk_t));
+	lchunk->tail = (void *)ALIGNMENT_CEILING((intptr_t)lchunk->tail, sizeof(long long));
 	return lchunk;
 }
 
@@ -160,19 +1573,18 @@ arena_lchunk_init_hard(arena_t *arena)
 {
 	log_chunk_t *lchunk;
 	bool zero;
-	size_t unzeroed, i;
 
 	zero = false;
 	malloc_mutex_unlock(&arena->lock);
 	lchunk = (log_chunk_t *)chunk_alloc(chunksize, chunksize, false,
-									  &zero, arena->dss_prec);
+										&zero, arena->dss_prec);
 	malloc_mutex_lock(&arena->lock);
 	if (lchunk == NULL)
 		return (NULL);
 
 	lchunk->logchunk = true;
 	lchunk->arena = arena;
-
+	
 	lchunk->size_dirty = 0;
 
 	lchunk->tail = (void *)(((intptr_t)lchunk) + sizeof(log_chunk_t));
@@ -181,28 +1593,27 @@ arena_lchunk_init_hard(arena_t *arena)
 	return lchunk;
 }
 
-
 /* 分配一个lchunk,有spare和hard两种方式 */
 static log_chunk_t *
 log_chunk_alloc(arena_t *arena)
 {
 	log_chunk_t *lchunk;
 
-	if (arena->lspare != NULL)
-		lchunk = arena_lchunk_init_spare(arena);
-	else
-	{
+	//if (arena->lspare != NULL)
+	//	lchunk = arena_lchunk_init_spare(arena);
+	//else
+	//{
 		lchunk = arena_lchunk_init_hard(arena);
 		if (lchunk == NULL)
 			return (NULL);
-	}
+	//}
 
 	lchunk_avail_tree_insert(&arena->lchunks_avail, lchunk);
 
 	return lchunk;
 }
 
-/* 释放一个lchunk.过程是先放在arena->spare,然后再释放 */
+/* 释放一个lchunk.过程是先放在arena->lspare,然后再释放 */
 static void
 log_chunk_dealloc(arena_t *arena, log_chunk_t *lchunk)
 {
@@ -213,24 +1624,23 @@ log_chunk_dealloc(arena_t *arena, log_chunk_t *lchunk)
 	{
 		log_chunk_t *lspare = arena->lspare;
 
-		arena->spare = lchunk;
+		arena->lspare = lchunk;
 		malloc_mutex_unlock(&arena->lock);
 		chunk_dealloc((void *)lspare, chunksize, true);
 		malloc_mutex_lock(&arena->lock);
 	}
 	else
-		arena->spare = lchunk;
+		arena->lspare = lchunk;
 }
-
 
 /* mark指将需要gc的lchunk从arena->lchunks_avail转移到arena->lchunks_dirty */
 
 /* mark过程是只在free结束后满足gc条件时做,而arena_gc_own实际的gc过程,只有当前线程马上完成gc,
  * 其他线程会在malloc或free开始时做.
  */
-static void 
+static void
 arena_gc_mark_lchunk(arena_t *arena)
-{	
+{
 	/* 迭代availtree,判断是否需要gc并加入dirtytree */
 	log_chunk_t *lchunk = lchunk_avail_tree_first(&arena->lchunks_avail);
 	while (lchunk != NULL)
@@ -260,24 +1670,23 @@ arena_gc_mark_lchunk(arena_t *arena)
 }
 
 /* 将lregion以append的形式复制到lchunk */
-static inline void 
+static inline void
 arena_lchunk_append_copy(arena_t *arena, log_chunk_t *lchunk, log_region_t *lregion, size_t size)
 {
 
-	log_region_t *new_lregion = arena_lchunk_append_to_tail(arena,lchunk,size);
-	
+	log_region_t *new_lregion = arena_lchunk_append_to_tail(arena, lchunk, size);
+
 	memcpy(new_lregion, lregion, size);
 	/* tree_link和用户保留的地址需要被更新 */
 	new_lregion->lregion_link.rbn_left = 0;
 	new_lregion->lregion_link.rbn_right_red = 0;
-    *(new_lregion->ptr) = lregion_to_user_pointer(new_lregion);
+	*(new_lregion->ptr) = lregion_to_user_pointer(new_lregion);
 
 	lregion_tree_insert(&lchunk->lregions, new_lregion);
-
 }
 
 /* 转移一个lregion */
-static inline void 
+static inline void
 arena_dirty_lregion_migrate(log_chunk_t *lchunk, arena_t *arena, log_region_t *lregion)
 {
 	size_t size = lregion->size;
@@ -300,7 +1709,7 @@ arena_dirty_lregion_migrate(log_chunk_t *lchunk, arena_t *arena, log_region_t *l
 /*
  * 大体功能:迭代所有lregion,将还在活跃的数据进行转移
  */
-static void 
+static void
 arena_do_dirty_lchunk_gc(arena_t *arena, log_chunk_t *lchunk)
 {
 	log_region_t *lregion = lregion_tree_first(&lchunk->lregions);
@@ -322,7 +1731,7 @@ arena_do_dirty_lchunk_gc(arena_t *arena, log_chunk_t *lchunk)
  * 调用线程把里面所有属于自己的活跃数据转移到新的lchunk,当一个lchunk所有活跃
  * 数据都被转移后,释放lchunk.
  */
-static void 
+static void
 arena_gc_own(arena_t *arena, pid_t pid)
 {
 	log_chunk_t *lchunk = lchunk_dirty_tree_first(&arena->lchunks_dirty);
@@ -333,7 +1742,7 @@ arena_gc_own(arena_t *arena, pid_t pid)
 		/* 实际gc迭代到的lchunk的入口 */
 		arena_do_dirty_lchunk_gc(arena, lchunk);
 		/* 检查是否完成全部gc,可以释放 */
-		if (lchunk->size_dirty == ((intptr_t)lchunk->tail - (intptr_t)lchunk - sizeof(log_chunk_t)))
+		if (lchunk->size_dirty == ((intptr_t)lchunk->tail - (intptr_t)lchunk - sizeof(log_chunk_t)));
 		{
 			todel = true;
 			lchunktodel = lchunk;
@@ -350,8 +1759,6 @@ arena_gc_own(arena_t *arena, pid_t pid)
 	}
 	return;
 }
-
-
 
 /* 实际分配一个lregion */
 static log_region_t *
@@ -371,7 +1778,7 @@ arena_alloc_lregion(arena_t *arena, size_t size, bool zero, void **ptr)
 			return NULL;
 	}
 
-	lregion = arena_lchunk_append_to_tail(arena,lchunk,size);
+	lregion = arena_lchunk_append_to_tail(arena, lchunk, size);
 	lregion->ptr = ptr;
 	lregion->pid = get_tid();
 	lregion->size = size;
@@ -379,7 +1786,6 @@ arena_alloc_lregion(arena_t *arena, size_t size, bool zero, void **ptr)
 	lregion_tree_insert(&lchunk->lregions, lregion);
 
 	return lregion;
-
 }
 
 /* 判断是否需要做gc,如果需要就开始gc*/
@@ -397,7 +1803,6 @@ log_maybe_purge(arena_t *arena)
 	return;
 }
 
-
 /* free的过程就是把lregion的脏位设置为脏 */
 static void
 arena_lregion_dalloc(arena_t *arena, log_region_t *lregion, bool dirty, bool cleaned)
@@ -406,14 +1811,10 @@ arena_lregion_dalloc(arena_t *arena, log_region_t *lregion, bool dirty, bool cle
 	lregion->attr |= 1UL;
 	// 判断是否当前的操作引起需要gc
 	log_maybe_purge(arena);
-
-
 }
 
-
 /* 定位到需要free的lregion */
-void 
-arena_log_dealloc_locked(arena_t *arena, log_chunk_t *lchunk, void *ptr)
+void arena_log_dealloc_locked(arena_t *arena, log_chunk_t *lchunk, void *ptr)
 {
 
 	log_region_t *lregion;
@@ -422,12 +1823,8 @@ arena_log_dealloc_locked(arena_t *arena, log_chunk_t *lchunk, void *ptr)
 	arena_lregion_dalloc(arena, lregion, true, false);
 }
 
-
-
-
 /* free的具体执行入口,该函数只是提供锁的封装 */
-void 
-arena_log_dealloc(arena_t *arena, log_chunk_t *lchunk, void *ptr)
+void arena_log_dealloc(arena_t *arena, log_chunk_t *lchunk, void *ptr)
 {
 
 	malloc_mutex_lock(&arena->lock);
@@ -435,8 +1832,6 @@ arena_log_dealloc(arena_t *arena, log_chunk_t *lchunk, void *ptr)
 	arena_log_dealloc_locked(arena, lchunk, ptr);
 	malloc_mutex_unlock(&arena->lock);
 }
-
-
 
 /* log-structured分配的入口,由jemalloc.c直接跳转到这里完成分配 */
 void *
@@ -447,7 +1842,7 @@ arena_log_malloc(arena_t *arena, size_t size, bool zero, void **ptr)
 
 	malloc_mutex_lock(&arena->lock);
 	arena->nop++;
-	
+
 	/* 每个线程完成自己垃圾回收,目前没有条件 */
 	if (true)
 	{
@@ -477,9 +1872,9 @@ arena_log_malloc(arena_t *arena, size_t size, bool zero, void **ptr)
 		if (config_fill)
 		{
 			if (opt_junk)
-				memset(ret, 0xa5, size-sizeof(log_region_t));
+				memset(ret, 0xa5, size - sizeof(log_region_t));
 			else if (opt_zero)
-				memset(ret, 0, size-sizeof(log_region_t));
+				memset(ret, 0, size - sizeof(log_region_t));
 		}
 	}
 
