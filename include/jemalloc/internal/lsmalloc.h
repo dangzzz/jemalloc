@@ -44,6 +44,8 @@ typedef rb_tree(log_region_t) lregion_tree_t;
 
 /* 简称lchunk */
 struct log_chunk_s{
+	/* 标识是否是lchunk */
+	bool					logchunk;
 
 	/* 保存所有log的树,对应lregion->lregion_link*/
 	lregion_tree_t 			lregions;
@@ -75,8 +77,8 @@ typedef rb_tree(log_chunk_t) lchunk_dirty_tree_t;
 #ifdef JEMALLOC_H_EXTERNS
 void lchunk_avail_tree_new(lchunk_avail_tree_t *rbtree);
 void lchunk_dirty_tree_new(lchunk_dirty_tree_t *rbtree);
-
-
+void *arena_log_malloc(arena_t *arena, size_t size, bool zero, void **ptr);
+void  arena_log_dealloc(arena_t *arena, log_chunk_t *lchunk, void *ptr);
 
 
 #endif /* JEMALLOC_H_EXTERNS */

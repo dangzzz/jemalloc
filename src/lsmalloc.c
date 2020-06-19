@@ -64,7 +64,7 @@ static inline int lchunk_avail_comp(log_chunk_t *a, log_chunk_t *b)
 	return (ret);
 }
 
-rb_gen(static UNUSED, lchunk_avail_tree_, lchunk_avail_tree_t, log_chunk_t,
+rb_gen(UNUSED, lchunk_avail_tree_, lchunk_avail_tree_t, log_chunk_t,
        avail_link, lchunk_avail_comp)
 
 
@@ -83,7 +83,7 @@ static inline int lchunk_dirty_comp(log_chunk_t *a, log_chunk_t *b)
 	return ((a_addr > b_addr) - (a_addr < b_addr));
 }
 
-rb_gen(static UNUSED, lchunk_dirty_tree_, lchunk_dirty_tree_t, log_chunk_t,
+rb_gen(UNUSED, lchunk_dirty_tree_, lchunk_dirty_tree_t, log_chunk_t,
 	   dirty_link, lchunk_dirty_comp)
 
 /******************************************************************************/
@@ -170,6 +170,7 @@ arena_lchunk_init_hard(arena_t *arena)
 	if (lchunk == NULL)
 		return (NULL);
 
+	lchunk->logchunk = true;
 	lchunk->arena = arena;
 
 	lchunk->size_dirty = 0;
@@ -388,7 +389,7 @@ log_maybe_purge(arena_t *arena)
 
 	if (arena->nop >= GC_NOP)
 	{
-		pid_t pid = gte_tid();
+		pid_t pid = get_tid();
 		arena_gc_mark_lchunk(arena);
 		arena_gc_own(arena, pid);
 		arena->nop = 0;
@@ -460,14 +461,14 @@ arena_log_malloc(arena_t *arena, size_t size, bool zero, void **ptr)
 	/* 通过arena_alloc_lregion来完成分配,返回lregion */
 	lregion = arena_alloc_lregion(arena, size, zero, ptr);
 
-	if (log == NULL)
+	if (lregion == NULL)
 	{
 		malloc_mutex_unlock(&arena->lock);
 		return (NULL);
 	}
 
 	/* ret是实际返回给用户的地址,需要去掉header */
-	ret = (void *)((intptr_t)log + sizeof(log_region_t));
+	ret = (void *)((intptr_t)lregion + sizeof(log_region_t));
 
 	malloc_mutex_unlock(&arena->lock);
 

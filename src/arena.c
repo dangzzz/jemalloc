@@ -561,6 +561,9 @@ arena_chunk_init_hard(arena_t *arena)
 	if (config_stats)
 		arena->stats.mapped += chunksize;
 
+#ifdef JEMALLOC_LSMALLOC
+	chunk->logchunk = false;
+#endif
 	chunk->arena = arena;
 
 	/*

@@ -162,6 +162,10 @@ typedef ql_head(arena_chunk_map_t) arena_chunk_mapelms_t;
 
 /* Arena chunk header. */
 struct arena_chunk_s {
+#ifdef JEMALLOC_LSMALLOC
+	/* 标识是否是lchunk */
+	bool					logchunk;
+#endif
 	/* Arena that owns the chunk. */
 	arena_t			*arena;
 
@@ -965,15 +969,14 @@ arena_prof_ctx_set(const void *ptr, size_t usize, prof_ctx_t *ctx)
 	}
 }
 
-JEMALLOC_ALWAYS_INLINE void *
-arena_malloc(arena_t *arena, size_t size, bool zero, bool try_tcache)
-{
-	tcache_t *tcache;
 
-	assert(size != 0);
-	assert(size <= arena_maxclass);
+
 #ifdef JEMALLOC_LSMALLOC
 
+JEMALLOC_ALWAYS_INLINE void *
+arena_lmalloc(arena_t *arena, size_t size, bool zero, bool try_tcache, void **ptr){
+
+	tcache_t *tcache;
 	if (size <= LOG_MINSIZE) {
 		if (try_tcache && (tcache = tcache_get(true)) != NULL)
 			return (tcache_alloc_small(tcache, size, zero));
@@ -982,11 +985,23 @@ arena_malloc(arena_t *arena, size_t size, bool zero, bool try_tcache)
 			    zero));
 		}
 	} else {
-		//todo ls
+		return arena_log_malloc(choose_arena(arena),size,zero,ptr);
 	}
+
+}
+	
 	
 
-#else
+#endif
+
+
+JEMALLOC_ALWAYS_INLINE void *
+arena_malloc(arena_t *arena, size_t size, bool zero, bool try_tcache)
+{
+	tcache_t *tcache;
+
+	assert(size != 0);
+	assert(size <= arena_maxclass);
 
 	if (size <= SMALL_MAXCLASS) {
 		if (try_tcache && (tcache = tcache_get(true)) != NULL)
@@ -1008,7 +1023,7 @@ arena_malloc(arena_t *arena, size_t size, bool zero, bool try_tcache)
 			    zero));
 		}
 	}
-#endif
+
 }
 
 /* Return the size of the allocation pointed to by ptr. */
