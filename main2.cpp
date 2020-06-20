@@ -1,3 +1,5 @@
+//g++ -g3 -pg  main.cpp -o main -L ./lib -I ./include/jemalloc/   -ljemalloc -static -lpthread
+#define JEMALLOC_LSMALLOC
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -68,10 +70,10 @@ ull getRSS()
 /*allocate one object, size=sz*/
 void malloc_one(ull sz)
 { 
-	gettimeofday(&s_time, NULL);
-	rd_addr[alloc_object_num] = yesmalloc(sz, &rd_addr[alloc_object_num]);
-//	rd_addr[alloc_object_num] = malloc(sz);
-	gettimeofday(&e_time, NULL);
+
+//	rd_addr[alloc_object_num] = log_malloc(sz, &rd_addr[alloc_object_num]);
+	rd_addr[alloc_object_num] = yesmalloc(sz);
+
 	malloc_time += (e_time.tv_sec-s_time.tv_sec)*1000000+(e_time.tv_usec-s_time.tv_usec);
 	
 	memset(rd_addr[alloc_object_num], -1, sz); /////
@@ -87,10 +89,10 @@ void free_one(ull x)
 {
 	live_sz -= rd_sz[x];
 
-	gettimeofday(&s_time, NULL);
+
+	//log_free(rd_addr[x]);
 	yesfree(rd_addr[x]);
-//	free(rd_addr[x]);
-	gettimeofday(&e_time, NULL);
+
 	free_time += (e_time.tv_sec-s_time.tv_sec)*1000000+(e_time.tv_usec-s_time.tv_usec);
 //	printf("%llu\n", free_time);
 
