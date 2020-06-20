@@ -1556,14 +1556,13 @@ arena_lchunk_init_spare(arena_t *arena)
 	lchunk = arena->lspare;
 	arena->lspare = NULL;
 
-	lchunk->size_dirty = 0;
-	lchunk->avail_link.rbn_left=0;
-	lchunk->avail_link.rbn_right_red=0;
-	lchunk->dirty_link.rbn_left=0;
-	lchunk->dirty_link.rbn_right_red=0;
-	lchunk->lregions.rbt_root=&lchunk->lregions.rbt_nil;
+
+	memset(lchunk,0,sizeof(log_chunk_t));
+	lchunk->logchunk = true;
+	lchunk->arena = arena;
 	lchunk->tail = (void *)(((intptr_t)lchunk) + sizeof(log_chunk_t));
 	lchunk->tail = (void *)ALIGNMENT_CEILING((intptr_t)lchunk->tail, sizeof(long long));
+	lregion_tree_new(&lchunk->lregions);
 	return lchunk;
 }
 

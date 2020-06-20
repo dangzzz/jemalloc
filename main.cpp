@@ -1,3 +1,4 @@
+//g++ -g3 -pg  main.cpp -o main -L ./lib -I ./include/jemalloc/   -ljemalloc -static -lpthread
 #define JEMALLOC_LSMALLOC
 #include <jemalloc.h>
 #include <stdio.h>
@@ -63,7 +64,8 @@ ull getRSS()
 /*allocate one object, size=sz*/
 void malloc_one(ull sz)
 {
-	rd_addr[alloc_object_num] = log_malloc(sz, &rd_addr[alloc_object_num]);
+	//rd_addr[alloc_object_num] = log_malloc(sz, &rd_addr[alloc_object_num]);
+	rd_addr[alloc_object_num] = yesmalloc(sz);
 	memset(rd_addr[alloc_object_num], -1, sz); /////
 	//rd_addr.push_back(tmp);
 	//rd_sz.push_back(sz);
@@ -78,7 +80,7 @@ void malloc_one(ull sz)
 void free_one(ull x)
 {
 	live_sz -= rd_sz[x];
-	log_free(rd_addr[x]);
+	yesfree(rd_addr[x]);
 	rd_sz[x] = 0; //=0 means freed
 }
 
@@ -274,7 +276,8 @@ int main(int argc, char *argv[])
 	for (int i = 0; i < len; i++)
 	{
 
-		if (rd_sz[i] != 0) log_free(rd_addr[i]);
+		//if (rd_sz[i] != 0) log_free(rd_addr[i]);
+		if (rd_sz[i] != 0) yesfree(rd_addr[i]);
 	}
 
 	return 0;	

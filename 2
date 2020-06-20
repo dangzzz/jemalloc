@@ -1,0 +1,1016 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls   s/call   s/call  name    
+ 17.88     13.87    13.87                             open64
+ 11.47     22.77     8.90                             read
+  9.54     30.17     7.40 89908267     0.00     0.00  lregion_tree_insert
+  6.32     35.07     4.90                             __close_nocancel
+  6.07     39.78     4.71                             __memcpy_avx_unaligned_erms
+  5.10     43.74     3.96 89911851     0.00     0.00  lchunk_avail_tree_insert
+  5.10     47.70     3.96                             syscall
+  4.99     51.58     3.88 1801774807     0.00     0.00  lregion_comp
+  4.83     55.33     3.75 89888040     0.00     0.00  lregion_tree_next
+  4.25     58.63     3.30                             _fxstat
+  3.91     61.66     3.03 89911850     0.00     0.00  lchunk_avail_tree_remove
+  3.76     64.57     2.92 799190560     0.00     0.00  lchunk_avail_comp
+  2.18     66.26     1.69        1     1.69    31.47  test()
+  1.61     67.51     1.25                             brk
+  1.10     68.36     0.85  9275865     0.00     0.00  arena_log_dealloc_locked
+  1.01     69.14     0.78                             __profile_frequency
+  0.84     69.79     0.65     3583     0.00     0.01  arena_do_dirty_lchunk_gc
+  0.75     70.37     0.58                             madvise
+  0.63     70.86     0.49  8469269     0.00     0.00  free_one(unsigned long long)
+  0.59     71.32     0.46                             _IO_file_xsgetn
+  0.55     71.75     0.43 80632402     0.00     0.00  arena_lchunk_append_copy
+  0.54     72.17     0.42  9275866     0.00     0.00  getRSS()
+  0.52     72.57     0.40 80632402     0.00     0.00  arena_dirty_lregion_migrate
+  0.51     72.96     0.40 18558896     0.00     0.00  je_malloc_mutex_unlock
+  0.46     73.32     0.36 89908267     0.00     0.00  arena_lchunk_append_to_tail
+  0.43     73.65     0.33  9275865     0.00     0.00  arena_alloc_lregion
+  0.43     73.98     0.33                             ____strtol_l_internal
+  0.40     74.29     0.31                             __memset_avx2_unaligned_erms
+  0.34     74.55     0.26                             free
+  0.33     74.81     0.26                             lregion_tree_reverse_iter
+  0.23     74.99     0.18                             _IO_new_file_fopen
+  0.23     75.17     0.18                             fread
+  0.21     75.33     0.16                             malloc
+  0.21     75.49     0.16                             pthread_mutex_unlock
+  0.18     75.63     0.14                             pthread_mutex_lock
+  0.15     75.75     0.12                             fclose
+  0.13     75.85     0.10                             _IO_un_link
+  0.13     75.95     0.10                             __strstr_sse2_unaligned
+  0.12     76.04     0.09 80632402     0.00     0.00  lregion_to_user_pointer
+  0.12     76.13     0.09  9275865     0.00     0.00  arena_log_malloc
+  0.10     76.21     0.08                             _IO_link_in
+  0.10     76.29     0.08                             random
+  0.09     76.36     0.07                             _IO_no_init
+  0.09     76.43     0.07                             lregion_tree_last
+  0.08     76.49     0.06   675259     0.00     0.00  lchunk_need_gc
+  0.08     76.55     0.06                             _IO_new_file_close_it
+  0.06     76.60     0.05                             _IO_file_doallocate
+  0.06     76.65     0.05                             _IO_file_read
+  0.06     76.70     0.05                             __memcmp_ssse3
+  0.06     76.75     0.05                             __mempcpy_avx_unaligned_erms
+  0.06     76.80     0.05                             __memset_avx2_erms
+  0.05     76.84     0.04 18572816     0.00     0.00  get_tid
+  0.05     76.88     0.04  9275865     0.00     0.00  lchunk_avail_tree_nsearch
+  0.05     76.92     0.04    17503     0.00     0.00  arena_gc_mark_lchunk
+  0.05     76.96     0.04        1     0.04    31.63  main
+  0.05     76.99     0.04  9275865     0.00     0.00  malloc_one(unsigned long long)
+  0.05     77.03     0.04  9275865     0.00     0.00  ilfree
+  0.04     77.06     0.03  9310871     0.00     0.00  lchunk_dirty_tree_first
+  0.04     77.09     0.03  9275865     0.00     0.00  unsigned long long const& std::max<unsigned long long>(unsigned long long const&, unsigned long long const&)
+  0.04     77.12     0.03  9275865     0.00     0.00  arena_log_dealloc
+  0.04     77.15     0.03  9275865     0.00     0.00  log_malloc
+  0.04     77.18     0.03                             _IO_setb
+  0.04     77.21     0.03                             _IO_sgetn
+  0.04     77.24     0.03                             lregion_tree_psearch
+  0.04     77.27     0.03                             random_r
+  0.03     77.29     0.02  9275865     0.00     0.00  arena_lregion_dalloc
+  0.03     77.31     0.02  9275865     0.00     0.00  log_maybe_purge
+  0.03     77.33     0.02                             _IO_doallocbuf
+  0.03     77.35     0.02                             _IO_file_seekoff_mmap
+  0.03     77.37     0.02                             _IO_new_file_init_internal
+  0.03     77.39     0.02                             __pthread_mutex_lock_full
+  0.03     77.41     0.02                             _xstat
+  0.03     77.43     0.02                             fopen
+  0.01     77.44     0.01 18558896     0.00     0.00  je_malloc_mutex_lock
+  0.01     77.45     0.01  9293368     0.00     0.00  arena_gc_own
+  0.01     77.46     0.01  5242880     0.00     0.00  get_size_before()
+  0.01     77.47     0.01     3824     0.00     0.00  je_extent_tree_szad_remove
+  0.01     77.48     0.01     3584     0.00     0.00  arena_lchunk_init_hard
+  0.01     77.49     0.01        1     0.01     0.01  je_malloc_tsd_boot
+  0.01     77.50     0.01                             _IO_file_seekoff_maybe_mmap
+  0.01     77.51     0.01                             __fxprintf_nocancel
+  0.01     77.52     0.01                             __malloc_check_init
+  0.01     77.53     0.01                             __parse_one_specwc
+  0.01     77.54     0.01                             __pthread_mutex_unlock_usercnt
+  0.01     77.55     0.01                             __strtol_internal
+  0.01     77.56     0.01                             close
+  0.01     77.57     0.01                             je_rtree_set
+  0.01     77.58     0.01                             rand
+  0.01     77.59     0.01                             setstate_r
+  0.01     77.59     0.01  9275865     0.00     0.00  log_free
+  0.00     77.59     0.00  9275865     0.00     0.00  je_choose_arena
+  0.00     77.59     0.00  4032985     0.00     0.00  get_size_after()
+  0.00     77.59     0.00  1328510     0.00     0.00  chunksize_beforetail
+  0.00     77.59     0.00   675259     0.00     0.00  lchunk_avail_tree_next
+  0.00     77.59     0.00    20938     0.00     0.00  extent_ad_comp
+  0.00     77.59     0.00    18361     0.00     0.00  extent_szad_comp
+  0.00     77.59     0.00    17503     0.00     0.00  lchunk_avail_tree_first
+  0.00     77.59     0.00    14333     0.00     0.00  je_malloc_mutex_lock
+  0.00     77.59     0.00    14333     0.00     0.00  je_malloc_mutex_unlock
+  0.00     77.59     0.00    12181     0.00     0.00  lchunk_dirty_comp
+  0.00     77.59     0.00     7171     0.00     0.00  je_malloc_mutex_lock
+  0.00     77.59     0.00     7171     0.00     0.00  je_malloc_mutex_unlock
+  0.00     77.59     0.00     7166     0.00     0.00  lchunk_dirty_tree_next
+  0.00     77.59     0.00     3826     0.00     0.00  je_extent_tree_szad_insert
+  0.00     77.59     0.00     3632     0.00     0.00  je_extent_tree_ad_insert
+  0.00     77.59     0.00     3630     0.00     0.00  je_extent_tree_ad_remove
+  0.00     77.59     0.00     3585     0.00     0.00  chunk_recycle
+  0.00     77.59     0.00     3585     0.00     0.00  je_chunk_alloc
+  0.00     77.59     0.00     3584     0.00     0.00  je_extent_tree_szad_nsearch
+  0.00     77.59     0.00     3584     0.00     0.00  log_chunk_alloc
+  0.00     77.59     0.00     3584     0.00     0.00  lregion_tree_new
+  0.00     77.59     0.00     3583     0.00     0.00  lchunk_dirty_tree_insert
+  0.00     77.59     0.00     3583     0.00     0.00  lchunk_dirty_tree_remove
+  0.00     77.59     0.00     3583     0.00     0.00  log_chunk_dealloc
+  0.00     77.59     0.00     3583     0.00     0.00  lregion_tree_first
+  0.00     77.59     0.00     3582     0.00     0.00  chunk_record
+  0.00     77.59     0.00     3582     0.00     0.00  je_base_node_alloc
+  0.00     77.59     0.00     3582     0.00     0.00  je_chunk_dealloc
+  0.00     77.59     0.00     3582     0.00     0.00  je_chunk_dealloc_mmap
+  0.00     77.59     0.00     3582     0.00     0.00  je_chunk_unmap
+  0.00     77.59     0.00     3582     0.00     0.00  je_extent_tree_ad_nsearch
+  0.00     77.59     0.00     3582     0.00     0.00  je_extent_tree_ad_prev
+  0.00     77.59     0.00     3582     0.00     0.00  je_pages_purge
+  0.00     77.59     0.00     3580     0.00     0.00  je_base_node_dealloc
+  0.00     77.59     0.00      238     0.00     0.00  bits2groups
+  0.00     77.59     0.00      161     0.00     0.00  je_bitmap_info_init
+  0.00     77.59     0.00      133     0.00     0.00  je_bitmap_info_ngroups
+  0.00     77.59     0.00      133     0.00     0.00  je_bitmap_size
+  0.00     77.59     0.00       46     0.00     0.00  pages_map
+  0.00     77.59     0.00       45     0.00     0.00  je_chunk_alloc_mmap
+  0.00     77.59     0.00       34     0.00     0.00  je_malloc_mutex_init
+  0.00     77.59     0.00       28     0.00     0.00  arena_run_tree_new
+  0.00     77.59     0.00       28     0.00     0.00  bin_info_run_size_calc
+  0.00     77.59     0.00        9     0.00     0.00  je_base_alloc
+  0.00     77.59     0.00        8     0.00     0.00  std::uniform_int_distribution<unsigned long long>::param_type::param_type(unsigned long long, unsigned long long)
+  0.00     77.59     0.00        8     0.00     0.00  std::uniform_int_distribution<unsigned long long>::uniform_int_distribution(unsigned long long, unsigned long long)
+  0.00     77.59     0.00        3     0.00     0.00  std::__detail::_Mod<unsigned long, 2147483647ul, 1ul, 0ul, true, true>::__calc(unsigned long)
+  0.00     77.59     0.00        3     0.00     0.00  unsigned long std::__detail::__mod<unsigned long, 2147483647ul, 1ul, 0ul>(unsigned long)
+  0.00     77.59     0.00        3     0.00     0.00  je_extent_tree_ad_new
+  0.00     77.59     0.00        3     0.00     0.00  je_malloc_mutex_lock
+  0.00     77.59     0.00        3     0.00     0.00  je_malloc_mutex_unlock
+  0.00     77.59     0.00        3     0.00     0.00  pages_unmap
+  0.00     77.59     0.00        2     0.00     0.00  je_chunk_dss_prec_get
+  0.00     77.59     0.00        2     0.00     0.00  je_extent_tree_szad_new
+  0.00     77.59     0.00        1     0.00     0.00  _GLOBAL__sub_I_rd_addr
+  0.00     77.59     0.00        1     0.00     0.00  __static_initialization_and_destruction_0(int, int)
+  0.00     77.59     0.00        1     0.00     0.00  std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>::seed(unsigned long)
+  0.00     77.59     0.00        1     0.00     0.00  std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>::linear_congruential_engine(unsigned long)
+  0.00     77.59     0.00        1     0.00     0.00  arena_avail_tree_new
+  0.00     77.59     0.00        1     0.00     0.00  arena_chunk_dirty_new
+  0.00     77.59     0.00        1     0.00     0.00  base_pages_alloc
+  0.00     77.59     0.00        1     0.00     0.00  bin_info_init
+  0.00     77.59     0.00        1     0.00     0.00  chunk_alloc_mmap_slow
+  0.00     77.59     0.00        1     0.00     0.00  je_arena_boot
+  0.00     77.59     0.00        1     0.00     0.00  je_arena_new
+  0.00     77.59     0.00        1     0.00     0.00  je_arenas_extend
+  0.00     77.59     0.00        1     0.00     0.00  je_base_boot
+  0.00     77.59     0.00        1     0.00     0.00  je_choose_arena_hard
+  0.00     77.59     0.00        1     0.00     0.00  je_chunk_boot
+  0.00     77.59     0.00        1     0.00     0.00  je_ctl_boot
+  0.00     77.59     0.00        1     0.00     0.00  je_huge_boot
+  0.00     77.59     0.00        1     0.00     0.00  je_lchunk_avail_tree_new
+  0.00     77.59     0.00        1     0.00     0.00  je_lchunk_dirty_tree_new
+  0.00     77.59     0.00        1     0.00     0.00  je_mutex_boot
+  0.00     77.59     0.00        1     0.00     0.00  je_quarantine_boot
+  0.00     77.59     0.00        1     0.00     0.00  je_set_errno
+  0.00     77.59     0.00        1     0.00     0.00  je_tcache_boot0
+  0.00     77.59     0.00        1     0.00     0.00  je_tcache_boot1
+  0.00     77.59     0.00        1     0.00     0.01  jemalloc_constructor
+  0.00     77.59     0.00        1     0.00     0.00  malloc_conf_init
+  0.00     77.59     0.00        1     0.00     0.01  malloc_init_hard
+  0.00     77.59     0.00        1     0.00     0.00  malloc_ncpus
+  0.00     77.59     0.00        1     0.00     0.00  pages_trim
+
+			Call graph
+
+
+granularity: each sample hit covers 2 byte(s) for 0.01% of 77.59 seconds
+
+index % time    self  children    called     name
+                0.04   31.59       1/1           __libc_start_main [2]
+[1]     40.8    0.04   31.59       1         main [1]
+                1.69   29.78       1/1           test() [3]
+                0.00    0.11  806596/9275865     log_free [26]
+                0.00    0.00       1/9275866     getRSS() [34]
+-----------------------------------------------
+                                                 <spontaneous>
+[2]     40.8    0.00   31.63                 __libc_start_main [2]
+                0.04   31.59       1/1           main [1]
+-----------------------------------------------
+                1.69   29.78       1/1           main [1]
+[3]     40.6    1.69   29.78       1         test() [3]
+                0.04   27.60 9275865/9275865     malloc_one(unsigned long long) [4]
+                0.49    1.20 8469269/8469269     free_one(unsigned long long) [25]
+                0.42    0.00 9275865/9275866     getRSS() [34]
+                0.03    0.00 9275865/9275865     unsigned long long const& std::max<unsigned long long>(unsigned long long const&, unsigned long long const&) [68]
+                0.01    0.00 5242880/5242880     get_size_before() [89]
+                0.00    0.00 4032985/4032985     get_size_after() [1042]
+-----------------------------------------------
+                0.04   27.60 9275865/9275865     test() [3]
+[4]     35.6    0.04   27.60 9275865         malloc_one(unsigned long long) [4]
+                0.03   27.57 9275865/9275865     log_malloc [5]
+-----------------------------------------------
+                0.03   27.57 9275865/9275865     malloc_one(unsigned long long) [4]
+[5]     35.6    0.03   27.57 9275865         log_malloc [5]
+                0.09   27.48 9275865/9275865     arena_log_malloc [6]
+                0.00    0.00 9275865/9275865     je_choose_arena [109]
+-----------------------------------------------
+                0.09   27.48 9275865/9275865     log_malloc [5]
+[6]     35.5    0.09   27.48 9275865         arena_log_malloc [6]
+                0.01   24.63 9275865/9293368     arena_gc_own [7]
+                0.33    2.28 9275865/9275865     arena_alloc_lregion [24]
+                0.20    0.00 9275865/18558896     je_malloc_mutex_unlock [35]
+                0.02    0.00 9275865/18572816     get_tid [64]
+                0.00    0.00 9275865/18558896     je_malloc_mutex_lock [82]
+-----------------------------------------------
+                0.00    0.05   17503/9293368     log_maybe_purge [44]
+                0.01   24.63 9275865/9293368     arena_log_malloc [6]
+[7]     31.8    0.01   24.68 9293368         arena_gc_own [7]
+                0.65   24.00    3583/3583        arena_do_dirty_lchunk_gc [8]
+                0.03    0.00 9293368/9310871     lchunk_dirty_tree_first [65]
+                0.00    0.00    3583/3583        log_chunk_dealloc [99]
+                0.00    0.00    3583/7166        lchunk_dirty_tree_next [119]
+-----------------------------------------------
+                0.65   24.00    3583/3583        arena_gc_own [7]
+[8]     31.8    0.65   24.00    3583         arena_do_dirty_lchunk_gc [8]
+                0.40   18.43 80632402/80632402     arena_dirty_lregion_migrate [9]
+                3.75    1.42 89888040/89888040     lregion_tree_next [16]
+                0.00    0.00    3583/18572816     get_tid [64]
+                0.00    0.00    3583/3583        lregion_tree_first [127]
+-----------------------------------------------
+                0.40   18.43 80632402/80632402     arena_do_dirty_lchunk_gc [8]
+[9]     24.3    0.40   18.43 80632402         arena_dirty_lregion_migrate [9]
+                0.43   17.98 80632402/80632402     arena_lchunk_append_copy [10]
+                0.00    0.02    3488/3584        log_chunk_alloc [77]
+-----------------------------------------------
+                0.43   17.98 80632402/80632402     arena_dirty_lregion_migrate [9]
+[10]    23.7    0.43   17.98 80632402         arena_lchunk_append_copy [10]
+                0.32    8.73 80632402/89908267     arena_lchunk_append_to_tail [12]
+                6.64    2.20 80632402/89908267     lregion_tree_insert [13]
+                0.09    0.00 80632402/80632402     lregion_to_user_pointer [52]
+-----------------------------------------------
+                                                 <spontaneous>
+[11]    17.9   13.87    0.00                 open64 [11]
+-----------------------------------------------
+                0.04    1.00 9275865/89908267     arena_alloc_lregion [24]
+                0.32    8.73 80632402/89908267     arena_lchunk_append_copy [10]
+[12]    13.0    0.36    9.73 89908267         arena_lchunk_append_to_tail [12]
+                3.96    1.38 89908267/89911851     lchunk_avail_tree_insert [15]
+                3.03    1.37 89908267/89911850     lchunk_avail_tree_remove [19]
+-----------------------------------------------
+                0.76    0.25 9275865/89908267     arena_alloc_lregion [24]
+                6.64    2.20 80632402/89908267     arena_lchunk_append_copy [10]
+[13]    12.7    7.40    2.45 89908267         lregion_tree_insert [13]
+                2.45    0.00 1141332570/1801774807     lregion_comp [21]
+-----------------------------------------------
+                                                 <spontaneous>
+[14]    11.5    8.90    0.00                 read [14]
+-----------------------------------------------
+                0.00    0.00    3584/89911851     log_chunk_alloc [77]
+                3.96    1.38 89908267/89911851     arena_lchunk_append_to_tail [12]
+[15]     6.9    3.96    1.38 89911851         lchunk_avail_tree_insert [15]
+                1.38    0.00 377099037/799190560     lchunk_avail_comp [23]
+-----------------------------------------------
+                3.75    1.42 89888040/89888040     arena_do_dirty_lchunk_gc [8]
+[16]     6.7    3.75    1.42 89888040         lregion_tree_next [16]
+                1.42    0.00 660442237/1801774807     lregion_comp [21]
+-----------------------------------------------
+                                                 <spontaneous>
+[17]     6.3    4.90    0.00                 __close_nocancel [17]
+-----------------------------------------------
+                                                 <spontaneous>
+[18]     6.1    4.71    0.00                 __memcpy_avx_unaligned_erms [18]
+-----------------------------------------------
+                0.00    0.00    3583/89911850     arena_gc_mark_lchunk [49]
+                3.03    1.37 89908267/89911850     arena_lchunk_append_to_tail [12]
+[19]     5.7    3.03    1.37 89911850         lchunk_avail_tree_remove [19]
+                1.37    0.00 374893245/799190560     lchunk_avail_comp [23]
+-----------------------------------------------
+                                                 <spontaneous>
+[20]     5.1    3.96    0.00                 syscall [20]
+-----------------------------------------------
+                1.42    0.00 660442237/1801774807     lregion_tree_next [16]
+                2.45    0.00 1141332570/1801774807     lregion_tree_insert [13]
+[21]     5.0    3.88    0.00 1801774807         lregion_comp [21]
+-----------------------------------------------
+                                                 <spontaneous>
+[22]     4.3    3.30    0.00                 _fxstat [22]
+-----------------------------------------------
+                0.01    0.00 2150222/799190560     lchunk_avail_tree_next [98]
+                0.16    0.00 45048056/799190560     lchunk_avail_tree_nsearch [40]
+                1.37    0.00 374893245/799190560     lchunk_avail_tree_remove [19]
+                1.38    0.00 377099037/799190560     lchunk_avail_tree_insert [15]
+[23]     3.8    2.92    0.00 799190560         lchunk_avail_comp [23]
+-----------------------------------------------
+                0.33    2.28 9275865/9275865     arena_log_malloc [6]
+[24]     3.4    0.33    2.28 9275865         arena_alloc_lregion [24]
+                0.04    1.00 9275865/89908267     arena_lchunk_append_to_tail [12]
+                0.76    0.25 9275865/89908267     lregion_tree_insert [13]
+                0.04    0.16 9275865/9275865     lchunk_avail_tree_nsearch [40]
+                0.02    0.00 9275865/18572816     get_tid [64]
+                0.00    0.00      96/3584        log_chunk_alloc [77]
+-----------------------------------------------
+                0.49    1.20 8469269/8469269     test() [3]
+[25]     2.2    0.49    1.20 8469269         free_one(unsigned long long) [25]
+                0.00    1.20 8469269/9275865     log_free [26]
+-----------------------------------------------
+                0.00    0.11  806596/9275865     main [1]
+                0.00    1.20 8469269/9275865     free_one(unsigned long long) [25]
+[26]     1.7    0.01    1.31 9275865         log_free [26]
+                0.04    1.28 9275865/9275865     ilfree [27]
+-----------------------------------------------
+                0.04    1.28 9275865/9275865     log_free [26]
+[27]     1.7    0.04    1.28 9275865         ilfree [27]
+                0.03    1.25 9275865/9275865     arena_log_dealloc [28]
+-----------------------------------------------
+                0.03    1.25 9275865/9275865     ilfree [27]
+[28]     1.6    0.03    1.25 9275865         arena_log_dealloc [28]
+                0.85    0.19 9275865/9275865     arena_log_dealloc_locked [30]
+                0.20    0.00 9275865/18558896     je_malloc_mutex_unlock [35]
+                0.00    0.00 9275865/18558896     je_malloc_mutex_lock [82]
+-----------------------------------------------
+                                                 <spontaneous>
+[29]     1.6    1.25    0.00                 brk [29]
+-----------------------------------------------
+                0.85    0.19 9275865/9275865     arena_log_dealloc [28]
+[30]     1.3    0.85    0.19 9275865         arena_log_dealloc_locked [30]
+                0.02    0.17 9275865/9275865     arena_lregion_dalloc [41]
+-----------------------------------------------
+                                                 <spontaneous>
+[31]     1.0    0.78    0.00                 __profile_frequency [31]
+-----------------------------------------------
+                                                 <spontaneous>
+[32]     0.7    0.58    0.00                 madvise [32]
+-----------------------------------------------
+                                                 <spontaneous>
+[33]     0.6    0.46    0.00                 _IO_file_xsgetn [33]
+-----------------------------------------------
+                0.00    0.00       1/9275866     main [1]
+                0.42    0.00 9275865/9275866     test() [3]
+[34]     0.5    0.42    0.00 9275866         getRSS() [34]
+-----------------------------------------------
+                0.00    0.00    3582/18558896     log_chunk_dealloc [99]
+                0.00    0.00    3584/18558896     arena_lchunk_init_hard [78]
+                0.20    0.00 9275865/18558896     arena_log_dealloc [28]
+                0.20    0.00 9275865/18558896     arena_log_malloc [6]
+[35]     0.5    0.40    0.00 18558896         je_malloc_mutex_unlock [35]
+-----------------------------------------------
+                                                 <spontaneous>
+[36]     0.4    0.33    0.00                 ____strtol_l_internal [36]
+-----------------------------------------------
+                                                 <spontaneous>
+[37]     0.4    0.31    0.00                 __memset_avx2_unaligned_erms [37]
+-----------------------------------------------
+                                                 <spontaneous>
+[38]     0.3    0.26    0.00                 free [38]
+-----------------------------------------------
+                                                 <spontaneous>
+[39]     0.3    0.26    0.00                 lregion_tree_reverse_iter [39]
+-----------------------------------------------
+                0.04    0.16 9275865/9275865     arena_alloc_lregion [24]
+[40]     0.3    0.04    0.16 9275865         lchunk_avail_tree_nsearch [40]
+                0.16    0.00 45048056/799190560     lchunk_avail_comp [23]
+-----------------------------------------------
+                0.02    0.17 9275865/9275865     arena_log_dealloc_locked [30]
+[41]     0.3    0.02    0.17 9275865         arena_lregion_dalloc [41]
+                0.02    0.15 9275865/9275865     log_maybe_purge [44]
+-----------------------------------------------
+                                                 <spontaneous>
+[42]     0.2    0.18    0.00                 fread [42]
+-----------------------------------------------
+                                                 <spontaneous>
+[43]     0.2    0.18    0.00                 _IO_new_file_fopen [43]
+-----------------------------------------------
+                0.02    0.15 9275865/9275865     arena_lregion_dalloc [41]
+[44]     0.2    0.02    0.15 9275865         log_maybe_purge [44]
+                0.04    0.07   17503/17503       arena_gc_mark_lchunk [49]
+                0.00    0.05   17503/9293368     arena_gc_own [7]
+                0.00    0.00   17503/18572816     get_tid [64]
+-----------------------------------------------
+                                                 <spontaneous>
+[45]     0.2    0.16    0.00                 malloc [45]
+-----------------------------------------------
+                                                 <spontaneous>
+[46]     0.2    0.16    0.00                 pthread_mutex_unlock [46]
+-----------------------------------------------
+                                                 <spontaneous>
+[47]     0.2    0.14    0.00                 pthread_mutex_lock [47]
+-----------------------------------------------
+                                                 <spontaneous>
+[48]     0.2    0.12    0.00                 fclose [48]
+-----------------------------------------------
+                0.04    0.07   17503/17503       log_maybe_purge [44]
+[49]     0.1    0.04    0.07   17503         arena_gc_mark_lchunk [49]
+                0.06    0.00  675259/675259      lchunk_need_gc [57]
+                0.00    0.01  675259/675259      lchunk_avail_tree_next [98]
+                0.00    0.00    3583/89911850     lchunk_avail_tree_remove [19]
+                0.00    0.00   17503/9310871     lchunk_dirty_tree_first [65]
+                0.00    0.00   17503/17503       lchunk_avail_tree_first [113]
+                0.00    0.00    3583/3583        lchunk_dirty_tree_insert [125]
+                0.00    0.00    3583/7166        lchunk_dirty_tree_next [119]
+-----------------------------------------------
+                                                 <spontaneous>
+[50]     0.1    0.10    0.00                 _IO_un_link [50]
+-----------------------------------------------
+                                                 <spontaneous>
+[51]     0.1    0.10    0.00                 __strstr_sse2_unaligned [51]
+-----------------------------------------------
+                0.09    0.00 80632402/80632402     arena_lchunk_append_copy [10]
+[52]     0.1    0.09    0.00 80632402         lregion_to_user_pointer [52]
+-----------------------------------------------
+                                                 <spontaneous>
+[53]     0.1    0.08    0.00                 random [53]
+-----------------------------------------------
+                                                 <spontaneous>
+[54]     0.1    0.08    0.00                 _IO_link_in [54]
+-----------------------------------------------
+                                                 <spontaneous>
+[55]     0.1    0.07    0.00                 lregion_tree_last [55]
+-----------------------------------------------
+                                                 <spontaneous>
+[56]     0.1    0.07    0.00                 _IO_no_init [56]
+-----------------------------------------------
+                0.06    0.00  675259/675259      arena_gc_mark_lchunk [49]
+[57]     0.1    0.06    0.00  675259         lchunk_need_gc [57]
+                0.00    0.00 1328510/1328510     chunksize_beforetail [110]
+-----------------------------------------------
+                                                 <spontaneous>
+[58]     0.1    0.06    0.00                 _IO_new_file_close_it [58]
+-----------------------------------------------
+                                                 <spontaneous>
+[59]     0.1    0.05    0.00                 _IO_file_doallocate [59]
+-----------------------------------------------
+                                                 <spontaneous>
+[60]     0.1    0.05    0.00                 _IO_file_read [60]
+-----------------------------------------------
+                                                 <spontaneous>
+[61]     0.1    0.05    0.00                 __memcmp_ssse3 [61]
+-----------------------------------------------
+                                                 <spontaneous>
+[62]     0.1    0.05    0.00                 __mempcpy_avx_unaligned_erms [62]
+-----------------------------------------------
+                                                 <spontaneous>
+[63]     0.1    0.05    0.00                 __memset_avx2_erms [63]
+-----------------------------------------------
+                0.00    0.00    3583/18572816     arena_do_dirty_lchunk_gc [8]
+                0.00    0.00   17503/18572816     log_maybe_purge [44]
+                0.02    0.00 9275865/18572816     arena_alloc_lregion [24]
+                0.02    0.00 9275865/18572816     arena_log_malloc [6]
+[64]     0.1    0.04    0.00 18572816         get_tid [64]
+-----------------------------------------------
+                0.00    0.00   17503/9310871     arena_gc_mark_lchunk [49]
+                0.03    0.00 9293368/9310871     arena_gc_own [7]
+[65]     0.0    0.03    0.00 9310871         lchunk_dirty_tree_first [65]
+-----------------------------------------------
+                                                 <spontaneous>
+[66]     0.0    0.03    0.00                 lregion_tree_psearch [66]
+-----------------------------------------------
+                                                 <spontaneous>
+[67]     0.0    0.03    0.00                 random_r [67]
+-----------------------------------------------
+                0.03    0.00 9275865/9275865     test() [3]
+[68]     0.0    0.03    0.00 9275865         unsigned long long const& std::max<unsigned long long>(unsigned long long const&, unsigned long long const&) [68]
+-----------------------------------------------
+                                                 <spontaneous>
+[69]     0.0    0.03    0.00                 _IO_setb [69]
+-----------------------------------------------
+                                                 <spontaneous>
+[70]     0.0    0.03    0.00                 _IO_sgetn [70]
+-----------------------------------------------
+                                                 <spontaneous>
+[71]     0.0    0.02    0.00                 fopen [71]
+-----------------------------------------------
+                                                 <spontaneous>
+[72]     0.0    0.02    0.00                 _IO_doallocbuf [72]
+-----------------------------------------------
+                                                 <spontaneous>
+[73]     0.0    0.02    0.00                 _IO_file_seekoff_mmap [73]
+-----------------------------------------------
+                                                 <spontaneous>
+[74]     0.0    0.02    0.00                 _IO_new_file_init_internal [74]
+-----------------------------------------------
+                                                 <spontaneous>
+[75]     0.0    0.02    0.00                 __pthread_mutex_lock_full [75]
+-----------------------------------------------
+                                                 <spontaneous>
+[76]     0.0    0.02    0.00                 _xstat [76]
+-----------------------------------------------
+                0.00    0.00      96/3584        arena_alloc_lregion [24]
+                0.00    0.02    3488/3584        arena_dirty_lregion_migrate [9]
+[77]     0.0    0.00    0.02    3584         log_chunk_alloc [77]
+                0.01    0.01    3584/3584        arena_lchunk_init_hard [78]
+                0.00    0.00    3584/89911851     lchunk_avail_tree_insert [15]
+-----------------------------------------------
+                0.01    0.01    3584/3584        log_chunk_alloc [77]
+[78]     0.0    0.01    0.01    3584         arena_lchunk_init_hard [78]
+                0.00    0.01    3584/3585        je_chunk_alloc [97]
+                0.00    0.00    3584/18558896     je_malloc_mutex_unlock [35]
+                0.00    0.00    3584/18558896     je_malloc_mutex_lock [82]
+                0.00    0.00    3584/3584        lregion_tree_new [124]
+-----------------------------------------------
+                0.00    0.01       1/1           __libc_csu_init [81]
+[79]     0.0    0.00    0.01       1         jemalloc_constructor [79]
+                0.00    0.01       1/1           malloc_init_hard [80]
+-----------------------------------------------
+                0.00    0.01       1/1           jemalloc_constructor [79]
+[80]     0.0    0.00    0.01       1         malloc_init_hard [80]
+                0.01    0.00       1/1           je_malloc_tsd_boot [84]
+                0.00    0.00       1/1           je_arenas_extend [106]
+                0.00    0.00       1/1           je_tcache_boot0 [108]
+                0.00    0.00       1/9           je_base_alloc [103]
+                0.00    0.00       2/3           je_malloc_mutex_lock [143]
+                0.00    0.00       2/3           je_malloc_mutex_unlock [144]
+                0.00    0.00       1/1           malloc_conf_init [164]
+                0.00    0.00       1/1           je_base_boot [153]
+                0.00    0.00       1/1           je_chunk_boot [155]
+                0.00    0.00       1/1           je_ctl_boot [156]
+                0.00    0.00       1/1           je_arena_boot [152]
+                0.00    0.00       1/1           je_huge_boot [157]
+                0.00    0.00       1/34          je_malloc_mutex_init [139]
+                0.00    0.00       1/1           je_tcache_boot1 [163]
+                0.00    0.00       1/1           je_quarantine_boot [161]
+                0.00    0.00       1/1           malloc_ncpus [165]
+                0.00    0.00       1/1           je_mutex_boot [160]
+-----------------------------------------------
+                                                 <spontaneous>
+[81]     0.0    0.00    0.01                 __libc_csu_init [81]
+                0.00    0.01       1/1           jemalloc_constructor [79]
+                0.00    0.00       1/1           _GLOBAL__sub_I_rd_addr [1047]
+-----------------------------------------------
+                0.00    0.00    3582/18558896     log_chunk_dealloc [99]
+                0.00    0.00    3584/18558896     arena_lchunk_init_hard [78]
+                0.00    0.00 9275865/18558896     arena_log_dealloc [28]
+                0.00    0.00 9275865/18558896     arena_log_malloc [6]
+[82]     0.0    0.01    0.00 18558896         je_malloc_mutex_lock [82]
+-----------------------------------------------
+                0.00    0.00     284/3824        chunk_record [100]
+                0.01    0.00    3540/3824        chunk_recycle [96]
+[83]     0.0    0.01    0.00    3824         je_extent_tree_szad_remove [83]
+                0.00    0.00    7385/18361       extent_szad_comp [112]
+-----------------------------------------------
+                0.01    0.00       1/1           malloc_init_hard [80]
+[84]     0.0    0.01    0.00       1         je_malloc_tsd_boot [84]
+-----------------------------------------------
+                                                 <spontaneous>
+[85]     0.0    0.01    0.00                 close [85]
+-----------------------------------------------
+                                                 <spontaneous>
+[86]     0.0    0.01    0.00                 je_rtree_set [86]
+-----------------------------------------------
+                                                 <spontaneous>
+[87]     0.0    0.01    0.00                 rand [87]
+-----------------------------------------------
+                                                 <spontaneous>
+[88]     0.0    0.01    0.00                 setstate_r [88]
+-----------------------------------------------
+                0.01    0.00 5242880/5242880     test() [3]
+[89]     0.0    0.01    0.00 5242880         get_size_before() [89]
+-----------------------------------------------
+                                                 <spontaneous>
+[90]     0.0    0.01    0.00                 _IO_file_seekoff_maybe_mmap [90]
+-----------------------------------------------
+                                                 <spontaneous>
+[91]     0.0    0.01    0.00                 __fxprintf_nocancel [91]
+-----------------------------------------------
+                                                 <spontaneous>
+[92]     0.0    0.01    0.00                 __malloc_check_init [92]
+-----------------------------------------------
+                                                 <spontaneous>
+[93]     0.0    0.01    0.00                 __parse_one_specwc [93]
+-----------------------------------------------
+                                                 <spontaneous>
+[94]     0.0    0.01    0.00                 __pthread_mutex_unlock_usercnt [94]
+-----------------------------------------------
+                                                 <spontaneous>
+[95]     0.0    0.01    0.00                 __strtol_internal [95]
+-----------------------------------------------
+                0.00    0.01    3585/3585        je_chunk_alloc [97]
+[96]     0.0    0.00    0.01    3585         chunk_recycle [96]
+                0.01    0.00    3540/3824        je_extent_tree_szad_remove [83]
+                0.00    0.00    3584/14333       je_malloc_mutex_lock [114]
+                0.00    0.00    3584/3584        je_extent_tree_szad_nsearch [123]
+                0.00    0.00    3584/14333       je_malloc_mutex_unlock [115]
+                0.00    0.00    3540/3630        je_extent_tree_ad_remove [122]
+                0.00    0.00    3386/3580        je_base_node_dealloc [132]
+                0.00    0.00     154/3826        je_extent_tree_szad_insert [120]
+                0.00    0.00     154/3632        je_extent_tree_ad_insert [121]
+-----------------------------------------------
+                0.00    0.00       1/3585        base_pages_alloc [104]
+                0.00    0.01    3584/3585        arena_lchunk_init_hard [78]
+[97]     0.0    0.00    0.01    3585         je_chunk_alloc [97]
+                0.00    0.01    3585/3585        chunk_recycle [96]
+                0.00    0.00    3585/14333       je_malloc_mutex_lock [114]
+                0.00    0.00    3585/14333       je_malloc_mutex_unlock [115]
+                0.00    0.00      45/45          je_chunk_alloc_mmap [138]
+-----------------------------------------------
+                0.00    0.01  675259/675259      arena_gc_mark_lchunk [49]
+[98]     0.0    0.00    0.01  675259         lchunk_avail_tree_next [98]
+                0.01    0.00 2150222/799190560     lchunk_avail_comp [23]
+-----------------------------------------------
+                0.00    0.00    3583/3583        arena_gc_own [7]
+[99]     0.0    0.00    0.00    3583         log_chunk_dealloc [99]
+                0.00    0.00    3582/3582        je_chunk_dealloc [101]
+                0.00    0.00    3582/18558896     je_malloc_mutex_unlock [35]
+                0.00    0.00    3582/18558896     je_malloc_mutex_lock [82]
+                0.00    0.00    3583/3583        lchunk_dirty_tree_remove [126]
+-----------------------------------------------
+                0.00    0.00    3582/3582        je_chunk_unmap [102]
+[100]    0.0    0.00    0.00    3582         chunk_record [100]
+                0.00    0.00     284/3824        je_extent_tree_szad_remove [83]
+                0.00    0.00    3582/3582        je_base_node_alloc [105]
+                0.00    0.00    3672/3826        je_extent_tree_szad_insert [120]
+                0.00    0.00    3582/3582        je_pages_purge [131]
+                0.00    0.00    3582/14333       je_malloc_mutex_lock [114]
+                0.00    0.00    3582/3582        je_extent_tree_ad_nsearch [129]
+                0.00    0.00    3582/3582        je_extent_tree_ad_prev [130]
+                0.00    0.00    3582/14333       je_malloc_mutex_unlock [115]
+                0.00    0.00    3478/3632        je_extent_tree_ad_insert [121]
+                0.00    0.00     194/3580        je_base_node_dealloc [132]
+                0.00    0.00      90/3630        je_extent_tree_ad_remove [122]
+-----------------------------------------------
+                0.00    0.00    3582/3582        log_chunk_dealloc [99]
+[101]    0.0    0.00    0.00    3582         je_chunk_dealloc [101]
+                0.00    0.00    3582/3582        je_chunk_unmap [102]
+                0.00    0.00    3582/14333       je_malloc_mutex_lock [114]
+                0.00    0.00    3582/14333       je_malloc_mutex_unlock [115]
+-----------------------------------------------
+                0.00    0.00    3582/3582        je_chunk_dealloc [101]
+[102]    0.0    0.00    0.00    3582         je_chunk_unmap [102]
+                0.00    0.00    3582/3582        chunk_record [100]
+                0.00    0.00    3582/3582        je_chunk_dealloc_mmap [128]
+-----------------------------------------------
+                0.00    0.00       1/9           je_arenas_extend [106]
+                0.00    0.00       1/9           malloc_init_hard [80]
+                0.00    0.00       1/9           je_arena_new [107]
+                0.00    0.00       1/9           je_tcache_boot0 [108]
+                0.00    0.00       5/9           je_base_node_alloc [105]
+[103]    0.0    0.00    0.00       9         je_base_alloc [103]
+                0.00    0.00       1/1           base_pages_alloc [104]
+                0.00    0.00       9/7171        je_malloc_mutex_lock [117]
+                0.00    0.00       9/7171        je_malloc_mutex_unlock [118]
+-----------------------------------------------
+                0.00    0.00       1/1           je_base_alloc [103]
+[104]    0.0    0.00    0.00       1         base_pages_alloc [104]
+                0.00    0.00       1/3585        je_chunk_alloc [97]
+                0.00    0.00       1/2           je_chunk_dss_prec_get [146]
+-----------------------------------------------
+                0.00    0.00    3582/3582        chunk_record [100]
+[105]    0.0    0.00    0.00    3582         je_base_node_alloc [105]
+                0.00    0.00       5/9           je_base_alloc [103]
+                0.00    0.00    3582/7171        je_malloc_mutex_lock [117]
+                0.00    0.00    3582/7171        je_malloc_mutex_unlock [118]
+-----------------------------------------------
+                0.00    0.00       1/1           malloc_init_hard [80]
+[106]    0.0    0.00    0.00       1         je_arenas_extend [106]
+                0.00    0.00       1/9           je_base_alloc [103]
+                0.00    0.00       1/1           je_arena_new [107]
+-----------------------------------------------
+                0.00    0.00       1/1           je_arenas_extend [106]
+[107]    0.0    0.00    0.00       1         je_arena_new [107]
+                0.00    0.00       1/9           je_base_alloc [103]
+                0.00    0.00      29/34          je_malloc_mutex_init [139]
+                0.00    0.00      28/28          arena_run_tree_new [140]
+                0.00    0.00       1/2           je_chunk_dss_prec_get [146]
+                0.00    0.00       1/1           arena_chunk_dirty_new [149]
+                0.00    0.00       1/1           je_lchunk_avail_tree_new [158]
+                0.00    0.00       1/1           je_lchunk_dirty_tree_new [159]
+                0.00    0.00       1/1           arena_avail_tree_new [148]
+-----------------------------------------------
+                0.00    0.00       1/1           malloc_init_hard [80]
+[108]    0.0    0.00    0.00       1         je_tcache_boot0 [108]
+                0.00    0.00       1/9           je_base_alloc [103]
+-----------------------------------------------
+                0.00    0.00 9275865/9275865     log_malloc [5]
+[109]    0.0    0.00    0.00 9275865         je_choose_arena [109]
+                0.00    0.00       1/1           je_choose_arena_hard [154]
+-----------------------------------------------
+                0.00    0.00 1328510/1328510     lchunk_need_gc [57]
+[110]    0.0    0.00    0.00 1328510         chunksize_beforetail [110]
+-----------------------------------------------
+                0.00    0.00    3870/20938       je_extent_tree_ad_insert [121]
+                0.00    0.00    3950/20938       je_extent_tree_ad_nsearch [129]
+                0.00    0.00    6294/20938       je_extent_tree_ad_prev [130]
+                0.00    0.00    6824/20938       je_extent_tree_ad_remove [122]
+[111]    0.0    0.00    0.00   20938         extent_ad_comp [111]
+-----------------------------------------------
+                0.00    0.00    4010/18361       je_extent_tree_szad_insert [120]
+                0.00    0.00    6966/18361       je_extent_tree_szad_nsearch [123]
+                0.00    0.00    7385/18361       je_extent_tree_szad_remove [83]
+[112]    0.0    0.00    0.00   18361         extent_szad_comp [112]
+-----------------------------------------------
+                0.00    0.00   17503/17503       arena_gc_mark_lchunk [49]
+[113]    0.0    0.00    0.00   17503         lchunk_avail_tree_first [113]
+-----------------------------------------------
+                0.00    0.00    3582/14333       chunk_record [100]
+                0.00    0.00    3582/14333       je_chunk_dealloc [101]
+                0.00    0.00    3584/14333       chunk_recycle [96]
+                0.00    0.00    3585/14333       je_chunk_alloc [97]
+[114]    0.0    0.00    0.00   14333         je_malloc_mutex_lock [114]
+-----------------------------------------------
+                0.00    0.00    3582/14333       chunk_record [100]
+                0.00    0.00    3582/14333       je_chunk_dealloc [101]
+                0.00    0.00    3584/14333       chunk_recycle [96]
+                0.00    0.00    3585/14333       je_chunk_alloc [97]
+[115]    0.0    0.00    0.00   14333         je_malloc_mutex_unlock [115]
+-----------------------------------------------
+                0.00    0.00     373/12181       lchunk_dirty_tree_insert [125]
+                0.00    0.00    3946/12181       lchunk_dirty_tree_remove [126]
+                0.00    0.00    7862/12181       lchunk_dirty_tree_next [119]
+[116]    0.0    0.00    0.00   12181         lchunk_dirty_comp [116]
+-----------------------------------------------
+                0.00    0.00       9/7171        je_base_alloc [103]
+                0.00    0.00    3580/7171        je_base_node_dealloc [132]
+                0.00    0.00    3582/7171        je_base_node_alloc [105]
+[117]    0.0    0.00    0.00    7171         je_malloc_mutex_lock [117]
+-----------------------------------------------
+                0.00    0.00       9/7171        je_base_alloc [103]
+                0.00    0.00    3580/7171        je_base_node_dealloc [132]
+                0.00    0.00    3582/7171        je_base_node_alloc [105]
+[118]    0.0    0.00    0.00    7171         je_malloc_mutex_unlock [118]
+-----------------------------------------------
+                0.00    0.00    3583/7166        arena_gc_mark_lchunk [49]
+                0.00    0.00    3583/7166        arena_gc_own [7]
+[119]    0.0    0.00    0.00    7166         lchunk_dirty_tree_next [119]
+                0.00    0.00    7862/12181       lchunk_dirty_comp [116]
+-----------------------------------------------
+                0.00    0.00     154/3826        chunk_recycle [96]
+                0.00    0.00    3672/3826        chunk_record [100]
+[120]    0.0    0.00    0.00    3826         je_extent_tree_szad_insert [120]
+                0.00    0.00    4010/18361       extent_szad_comp [112]
+-----------------------------------------------
+                0.00    0.00     154/3632        chunk_recycle [96]
+                0.00    0.00    3478/3632        chunk_record [100]
+[121]    0.0    0.00    0.00    3632         je_extent_tree_ad_insert [121]
+                0.00    0.00    3870/20938       extent_ad_comp [111]
+-----------------------------------------------
+                0.00    0.00      90/3630        chunk_record [100]
+                0.00    0.00    3540/3630        chunk_recycle [96]
+[122]    0.0    0.00    0.00    3630         je_extent_tree_ad_remove [122]
+                0.00    0.00    6824/20938       extent_ad_comp [111]
+-----------------------------------------------
+                0.00    0.00    3584/3584        chunk_recycle [96]
+[123]    0.0    0.00    0.00    3584         je_extent_tree_szad_nsearch [123]
+                0.00    0.00    6966/18361       extent_szad_comp [112]
+-----------------------------------------------
+                0.00    0.00    3584/3584        arena_lchunk_init_hard [78]
+[124]    0.0    0.00    0.00    3584         lregion_tree_new [124]
+-----------------------------------------------
+                0.00    0.00    3583/3583        arena_gc_mark_lchunk [49]
+[125]    0.0    0.00    0.00    3583         lchunk_dirty_tree_insert [125]
+                0.00    0.00     373/12181       lchunk_dirty_comp [116]
+-----------------------------------------------
+                0.00    0.00    3583/3583        log_chunk_dealloc [99]
+[126]    0.0    0.00    0.00    3583         lchunk_dirty_tree_remove [126]
+                0.00    0.00    3946/12181       lchunk_dirty_comp [116]
+-----------------------------------------------
+                0.00    0.00    3583/3583        arena_do_dirty_lchunk_gc [8]
+[127]    0.0    0.00    0.00    3583         lregion_tree_first [127]
+-----------------------------------------------
+                0.00    0.00    3582/3582        je_chunk_unmap [102]
+[128]    0.0    0.00    0.00    3582         je_chunk_dealloc_mmap [128]
+-----------------------------------------------
+                0.00    0.00    3582/3582        chunk_record [100]
+[129]    0.0    0.00    0.00    3582         je_extent_tree_ad_nsearch [129]
+                0.00    0.00    3950/20938       extent_ad_comp [111]
+-----------------------------------------------
+                0.00    0.00    3582/3582        chunk_record [100]
+[130]    0.0    0.00    0.00    3582         je_extent_tree_ad_prev [130]
+                0.00    0.00    6294/20938       extent_ad_comp [111]
+-----------------------------------------------
+                0.00    0.00    3582/3582        chunk_record [100]
+[131]    0.0    0.00    0.00    3582         je_pages_purge [131]
+-----------------------------------------------
+                0.00    0.00     194/3580        chunk_record [100]
+                0.00    0.00    3386/3580        chunk_recycle [96]
+[132]    0.0    0.00    0.00    3580         je_base_node_dealloc [132]
+                0.00    0.00    3580/7171        je_malloc_mutex_lock [117]
+                0.00    0.00    3580/7171        je_malloc_mutex_unlock [118]
+-----------------------------------------------
+                0.00    0.00     238/238         je_bitmap_info_init [134]
+[133]    0.0    0.00    0.00     238         bits2groups [133]
+-----------------------------------------------
+                0.00    0.00      28/161         bin_info_init [150]
+                0.00    0.00     133/161         je_bitmap_size [136]
+[134]    0.0    0.00    0.00     161         je_bitmap_info_init [134]
+                0.00    0.00     238/238         bits2groups [133]
+-----------------------------------------------
+                0.00    0.00     133/133         je_bitmap_size [136]
+[135]    0.0    0.00    0.00     133         je_bitmap_info_ngroups [135]
+-----------------------------------------------
+                0.00    0.00     133/133         bin_info_run_size_calc [141]
+[136]    0.0    0.00    0.00     133         je_bitmap_size [136]
+                0.00    0.00     133/161         je_bitmap_info_init [134]
+                0.00    0.00     133/133         je_bitmap_info_ngroups [135]
+-----------------------------------------------
+                0.00    0.00       1/46          chunk_alloc_mmap_slow [151]
+                0.00    0.00      45/46          je_chunk_alloc_mmap [138]
+[137]    0.0    0.00    0.00      46         pages_map [137]
+-----------------------------------------------
+                0.00    0.00      45/45          je_chunk_alloc [97]
+[138]    0.0    0.00    0.00      45         je_chunk_alloc_mmap [138]
+                0.00    0.00      45/46          pages_map [137]
+                0.00    0.00       1/3           pages_unmap [145]
+                0.00    0.00       1/1           chunk_alloc_mmap_slow [151]
+-----------------------------------------------
+                0.00    0.00       1/34          malloc_init_hard [80]
+                0.00    0.00       1/34          je_base_boot [153]
+                0.00    0.00       1/34          je_chunk_boot [155]
+                0.00    0.00       1/34          je_ctl_boot [156]
+                0.00    0.00       1/34          je_huge_boot [157]
+                0.00    0.00      29/34          je_arena_new [107]
+[139]    0.0    0.00    0.00      34         je_malloc_mutex_init [139]
+-----------------------------------------------
+                0.00    0.00      28/28          je_arena_new [107]
+[140]    0.0    0.00    0.00      28         arena_run_tree_new [140]
+-----------------------------------------------
+                0.00    0.00      28/28          bin_info_init [150]
+[141]    0.0    0.00    0.00      28         bin_info_run_size_calc [141]
+                0.00    0.00     133/133         je_bitmap_size [136]
+-----------------------------------------------
+                0.00    0.00       1/3           je_huge_boot [157]
+                0.00    0.00       2/3           je_chunk_boot [155]
+[142]    0.0    0.00    0.00       3         je_extent_tree_ad_new [142]
+-----------------------------------------------
+                0.00    0.00       1/3           je_choose_arena_hard [154]
+                0.00    0.00       2/3           malloc_init_hard [80]
+[143]    0.0    0.00    0.00       3         je_malloc_mutex_lock [143]
+-----------------------------------------------
+                0.00    0.00       1/3           je_choose_arena_hard [154]
+                0.00    0.00       2/3           malloc_init_hard [80]
+[144]    0.0    0.00    0.00       3         je_malloc_mutex_unlock [144]
+-----------------------------------------------
+                0.00    0.00       1/3           je_chunk_alloc_mmap [138]
+                0.00    0.00       2/3           pages_trim [166]
+[145]    0.0    0.00    0.00       3         pages_unmap [145]
+-----------------------------------------------
+                0.00    0.00       1/2           je_arena_new [107]
+                0.00    0.00       1/2           base_pages_alloc [104]
+[146]    0.0    0.00    0.00       2         je_chunk_dss_prec_get [146]
+-----------------------------------------------
+                0.00    0.00       2/2           je_chunk_boot [155]
+[147]    0.0    0.00    0.00       2         je_extent_tree_szad_new [147]
+-----------------------------------------------
+                0.00    0.00       1/1           je_arena_new [107]
+[148]    0.0    0.00    0.00       1         arena_avail_tree_new [148]
+-----------------------------------------------
+                0.00    0.00       1/1           je_arena_new [107]
+[149]    0.0    0.00    0.00       1         arena_chunk_dirty_new [149]
+-----------------------------------------------
+                0.00    0.00       1/1           je_arena_boot [152]
+[150]    0.0    0.00    0.00       1         bin_info_init [150]
+                0.00    0.00      28/28          bin_info_run_size_calc [141]
+                0.00    0.00      28/161         je_bitmap_info_init [134]
+-----------------------------------------------
+                0.00    0.00       1/1           je_chunk_alloc_mmap [138]
+[151]    0.0    0.00    0.00       1         chunk_alloc_mmap_slow [151]
+                0.00    0.00       1/46          pages_map [137]
+                0.00    0.00       1/1           pages_trim [166]
+-----------------------------------------------
+                0.00    0.00       1/1           malloc_init_hard [80]
+[152]    0.0    0.00    0.00       1         je_arena_boot [152]
+                0.00    0.00       1/1           bin_info_init [150]
+-----------------------------------------------
+                0.00    0.00       1/1           malloc_init_hard [80]
+[153]    0.0    0.00    0.00       1         je_base_boot [153]
+                0.00    0.00       1/34          je_malloc_mutex_init [139]
+-----------------------------------------------
+                0.00    0.00       1/1           je_choose_arena [109]
+[154]    0.0    0.00    0.00       1         je_choose_arena_hard [154]
+                0.00    0.00       1/3           je_malloc_mutex_lock [143]
+                0.00    0.00       1/3           je_malloc_mutex_unlock [144]
+-----------------------------------------------
+                0.00    0.00       1/1           malloc_init_hard [80]
+[155]    0.0    0.00    0.00       1         je_chunk_boot [155]
+                0.00    0.00       2/2           je_extent_tree_szad_new [147]
+                0.00    0.00       2/3           je_extent_tree_ad_new [142]
+                0.00    0.00       1/34          je_malloc_mutex_init [139]
+-----------------------------------------------
+                0.00    0.00       1/1           malloc_init_hard [80]
+[156]    0.0    0.00    0.00       1         je_ctl_boot [156]
+                0.00    0.00       1/34          je_malloc_mutex_init [139]
+-----------------------------------------------
+                0.00    0.00       1/1           malloc_init_hard [80]
+[157]    0.0    0.00    0.00       1         je_huge_boot [157]
+                0.00    0.00       1/34          je_malloc_mutex_init [139]
+                0.00    0.00       1/3           je_extent_tree_ad_new [142]
+-----------------------------------------------
+                0.00    0.00       1/1           je_arena_new [107]
+[158]    0.0    0.00    0.00       1         je_lchunk_avail_tree_new [158]
+-----------------------------------------------
+                0.00    0.00       1/1           je_arena_new [107]
+[159]    0.0    0.00    0.00       1         je_lchunk_dirty_tree_new [159]
+-----------------------------------------------
+                0.00    0.00       1/1           malloc_init_hard [80]
+[160]    0.0    0.00    0.00       1         je_mutex_boot [160]
+-----------------------------------------------
+                0.00    0.00       1/1           malloc_init_hard [80]
+[161]    0.0    0.00    0.00       1         je_quarantine_boot [161]
+-----------------------------------------------
+                0.00    0.00       1/1           malloc_conf_init [164]
+[162]    0.0    0.00    0.00       1         je_set_errno [162]
+-----------------------------------------------
+                0.00    0.00       1/1           malloc_init_hard [80]
+[163]    0.0    0.00    0.00       1         je_tcache_boot1 [163]
+-----------------------------------------------
+                0.00    0.00       1/1           malloc_init_hard [80]
+[164]    0.0    0.00    0.00       1         malloc_conf_init [164]
+                0.00    0.00       1/1           je_set_errno [162]
+-----------------------------------------------
+                0.00    0.00       1/1           malloc_init_hard [80]
+[165]    0.0    0.00    0.00       1         malloc_ncpus [165]
+-----------------------------------------------
+                0.00    0.00       1/1           chunk_alloc_mmap_slow [151]
+[166]    0.0    0.00    0.00       1         pages_trim [166]
+                0.00    0.00       2/3           pages_unmap [145]
+-----------------------------------------------
+                0.00    0.00 4032985/4032985     test() [3]
+[1042]   0.0    0.00    0.00 4032985         get_size_after() [1042]
+-----------------------------------------------
+                0.00    0.00       8/8           std::uniform_int_distribution<unsigned long long>::uniform_int_distribution(unsigned long long, unsigned long long) [1044]
+[1043]   0.0    0.00    0.00       8         std::uniform_int_distribution<unsigned long long>::param_type::param_type(unsigned long long, unsigned long long) [1043]
+-----------------------------------------------
+                0.00    0.00       8/8           __static_initialization_and_destruction_0(int, int) [1048]
+[1044]   0.0    0.00    0.00       8         std::uniform_int_distribution<unsigned long long>::uniform_int_distribution(unsigned long long, unsigned long long) [1044]
+                0.00    0.00       8/8           std::uniform_int_distribution<unsigned long long>::param_type::param_type(unsigned long long, unsigned long long) [1043]
+-----------------------------------------------
+                0.00    0.00       3/3           unsigned long std::__detail::__mod<unsigned long, 2147483647ul, 1ul, 0ul>(unsigned long) [1046]
+[1045]   0.0    0.00    0.00       3         std::__detail::_Mod<unsigned long, 2147483647ul, 1ul, 0ul, true, true>::__calc(unsigned long) [1045]
+-----------------------------------------------
+                0.00    0.00       3/3           std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>::seed(unsigned long) [1049]
+[1046]   0.0    0.00    0.00       3         unsigned long std::__detail::__mod<unsigned long, 2147483647ul, 1ul, 0ul>(unsigned long) [1046]
+                0.00    0.00       3/3           std::__detail::_Mod<unsigned long, 2147483647ul, 1ul, 0ul, true, true>::__calc(unsigned long) [1045]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [81]
+[1047]   0.0    0.00    0.00       1         _GLOBAL__sub_I_rd_addr [1047]
+                0.00    0.00       1/1           __static_initialization_and_destruction_0(int, int) [1048]
+-----------------------------------------------
+                0.00    0.00       1/1           _GLOBAL__sub_I_rd_addr [1047]
+[1048]   0.0    0.00    0.00       1         __static_initialization_and_destruction_0(int, int) [1048]
+                0.00    0.00       8/8           std::uniform_int_distribution<unsigned long long>::uniform_int_distribution(unsigned long long, unsigned long long) [1044]
+                0.00    0.00       1/1           std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>::linear_congruential_engine(unsigned long) [1050]
+-----------------------------------------------
+                0.00    0.00       1/1           std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>::linear_congruential_engine(unsigned long) [1050]
+[1049]   0.0    0.00    0.00       1         std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>::seed(unsigned long) [1049]
+                0.00    0.00       3/3           unsigned long std::__detail::__mod<unsigned long, 2147483647ul, 1ul, 0ul>(unsigned long) [1046]
+-----------------------------------------------
+                0.00    0.00       1/1           __static_initialization_and_destruction_0(int, int) [1048]
+[1050]   0.0    0.00    0.00       1         std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>::linear_congruential_engine(unsigned long) [1050]
+                0.00    0.00       1/1           std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>::seed(unsigned long) [1049]
+-----------------------------------------------
+
+Index by function name
+
+ [1047] _GLOBAL__sub_I_rd_addr (main.cpp) [6] arena_log_malloc [144] je_malloc_mutex_unlock (mutex.h)
+  [72] _IO_doallocbuf         [41] arena_lregion_dalloc (lsmalloc.c) [118] je_malloc_mutex_unlock (mutex.h)
+  [59] _IO_file_doallocate   [140] arena_run_tree_new (arena.c) [115] je_malloc_mutex_unlock (mutex.h)
+  [60] _IO_file_read         [104] base_pages_alloc (base.c) [35] je_malloc_mutex_unlock (mutex.h)
+  [90] _IO_file_seekoff_maybe_mmap [150] bin_info_init (arena.c) [84] je_malloc_tsd_boot
+  [73] _IO_file_seekoff_mmap [141] bin_info_run_size_calc (arena.c) [160] je_mutex_boot
+  [33] _IO_file_xsgetn       [133] bits2groups (bitmap.c) [131] je_pages_purge
+  [54] _IO_link_in            [29] brk                   [161] je_quarantine_boot
+  [58] _IO_new_file_close_it [151] chunk_alloc_mmap_slow (chunk_mmap.c) [86] je_rtree_set (rtree.h)
+  [43] _IO_new_file_fopen    [100] chunk_record (chunk.c) [162] je_set_errno (util.h)
+  [74] _IO_new_file_init_internal [96] chunk_recycle (chunk.c) [108] je_tcache_boot0
+  [56] _IO_no_init           [110] chunksize_beforetail (lsmalloc.c) [163] je_tcache_boot1
+  [69] _IO_setb               [85] close                  [79] jemalloc_constructor (jemalloc.c)
+  [70] _IO_sgetn             [111] extent_ad_comp (extent.c) [23] lchunk_avail_comp (lsmalloc.c)
+  [50] _IO_un_link           [112] extent_szad_comp (extent.c) [113] lchunk_avail_tree_first
+   [4] malloc_one(unsigned long long) [48] fclose         [15] lchunk_avail_tree_insert
+ [1042] get_size_after()      [71] fopen                  [98] lchunk_avail_tree_next
+  [89] get_size_before()      [42] fread                  [40] lchunk_avail_tree_nsearch
+ [1048] __static_initialization_and_destruction_0(int, int) (main.cpp) [38] free [19] lchunk_avail_tree_remove
+   [3] test()                 [64] get_tid (lsmalloc.c)  [116] lchunk_dirty_comp (lsmalloc.c)
+  [34] getRSS()               [27] ilfree (jemalloc.c)    [65] lchunk_dirty_tree_first
+  [25] free_one(unsigned long long) [152] je_arena_boot  [125] lchunk_dirty_tree_insert
+ [1043] std::uniform_int_distribution<unsigned long long>::param_type::param_type(unsigned long long, unsigned long long) [107] je_arena_new [119] lchunk_dirty_tree_next
+ [1044] std::uniform_int_distribution<unsigned long long>::uniform_int_distribution(unsigned long long, unsigned long long) [106] je_arenas_extend [126] lchunk_dirty_tree_remove
+ [1049] std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>::seed(unsigned long) [103] je_base_alloc [57] lchunk_need_gc (lsmalloc.c)
+ [1050] std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>::linear_congruential_engine(unsigned long) [153] je_base_boot [77] log_chunk_alloc (lsmalloc.c)
+ [1045] std::__detail::_Mod<unsigned long, 2147483647ul, 1ul, 0ul, true, true>::__calc(unsigned long) [105] je_base_node_alloc [99] log_chunk_dealloc (lsmalloc.c)
+ [1046] unsigned long std::__detail::__mod<unsigned long, 2147483647ul, 1ul, 0ul>(unsigned long) [132] je_base_node_dealloc [26] log_free
+  [68] unsigned long long const& std::max<unsigned long long>(unsigned long long const&, unsigned long long const&) [134] je_bitmap_info_init [5] log_malloc
+  [36] ____strtol_l_internal [135] je_bitmap_info_ngroups [44] log_maybe_purge (lsmalloc.c)
+  [17] __close_nocancel      [136] je_bitmap_size         [21] lregion_comp (lsmalloc.c)
+  [91] __fxprintf_nocancel   [109] je_choose_arena (jemalloc_internal.h) [52] lregion_to_user_pointer (lsmalloc.c)
+  [92] __malloc_check_init   [154] je_choose_arena_hard  [127] lregion_tree_first
+  [61] __memcmp_ssse3         [97] je_chunk_alloc         [13] lregion_tree_insert
+  [18] __memcpy_avx_unaligned_erms [138] je_chunk_alloc_mmap [55] lregion_tree_last
+  [62] __mempcpy_avx_unaligned_erms [155] je_chunk_boot  [124] lregion_tree_new
+  [63] __memset_avx2_erms    [101] je_chunk_dealloc       [16] lregion_tree_next
+  [37] __memset_avx2_unaligned_erms [128] je_chunk_dealloc_mmap [66] lregion_tree_psearch
+  [93] __parse_one_specwc    [146] je_chunk_dss_prec_get  [39] lregion_tree_reverse_iter
+  [31] __profile_frequency   [102] je_chunk_unmap         [32] madvise
+  [75] __pthread_mutex_lock_full (pthread_mutex_lock.c) [156] je_ctl_boot [1] main
+  [94] __pthread_mutex_unlock_usercnt [121] je_extent_tree_ad_insert [45] malloc
+  [51] __strstr_sse2_unaligned [142] je_extent_tree_ad_new [164] malloc_conf_init (jemalloc.c)
+  [95] __strtol_internal     [129] je_extent_tree_ad_nsearch [80] malloc_init_hard (jemalloc.c)
+  [22] _fxstat               [130] je_extent_tree_ad_prev [165] malloc_ncpus (jemalloc.c)
+  [76] _xstat                [122] je_extent_tree_ad_remove [11] open64
+  [24] arena_alloc_lregion (lsmalloc.c) [120] je_extent_tree_szad_insert [137] pages_map (chunk_mmap.c)
+ [148] arena_avail_tree_new (arena.c) [147] je_extent_tree_szad_new [166] pages_trim (chunk_mmap.c)
+ [149] arena_chunk_dirty_new (arena.c) [123] je_extent_tree_szad_nsearch [145] pages_unmap (chunk_mmap.c)
+   [9] arena_dirty_lregion_migrate (lsmalloc.c) [83] je_extent_tree_szad_remove [47] pthread_mutex_lock
+   [8] arena_do_dirty_lchunk_gc (lsmalloc.c) [157] je_huge_boot [46] pthread_mutex_unlock
+  [49] arena_gc_mark_lchunk (lsmalloc.c) [158] je_lchunk_avail_tree_new [87] rand
+   [7] arena_gc_own (lsmalloc.c) [159] je_lchunk_dirty_tree_new [53] random
+  [10] arena_lchunk_append_copy (lsmalloc.c) [139] je_malloc_mutex_init [67] random_r
+  [12] arena_lchunk_append_to_tail (lsmalloc.c) [143] je_malloc_mutex_lock (mutex.h) [14] read
+  [78] arena_lchunk_init_hard (lsmalloc.c) [117] je_malloc_mutex_lock (mutex.h) [88] setstate_r
+  [28] arena_log_dealloc     [114] je_malloc_mutex_lock (mutex.h) [20] syscall
+  [30] arena_log_dealloc_locked [82] je_malloc_mutex_lock (mutex.h)
