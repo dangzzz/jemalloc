@@ -24,7 +24,7 @@ typedef struct log_region_s log_region_t;
 struct log_region_s{
 
 	/* lregion在lchunk里的链接,对应lchunk->lregions */
-	rb_node(log_region_t) 	lregion_link;
+	ql_elm(log_region_t) 	lregion_link;
 
     /* 属性 */
 	unsigned short 			attr;
@@ -48,16 +48,16 @@ struct log_chunk_s{
 	bool					logchunk;
 
 	/* 保存所有log的树,对应lregion->lregion_link*/
-	lregion_tree_t 			lregions;
+	ql_head(log_region_t) 	lregions;
     
 	/* lchunk所属的arena */
 	arena_t					*arena;
 
 	/* 可用lchunk链接,对应arena->lchunks_avail */
-	ql_elm(log_chunk_t)	avail_link;
+	ql_elm(log_chunk_t)		avail_link;
 
 	/* 脏lchunk链接,垃圾回收时使用,对应arena->lchunks_dirty*/
-	ql_elm(log_chunk_t)	dirty_link;
+	ql_elm(log_chunk_t)		dirty_link;
 
 	/* 脏数据所占的大小 */
 	size_t					size_dirty;

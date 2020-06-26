@@ -18,25 +18,6 @@ __thread unsigned short lid = 0;
 /******************************************************************************/
 /* Generate red-black tree functions. */
 
-/* 
- * lregion在lchunk里管理的红黑树,对应lchunk->lregions.
- * lregion_comp提供了树的排序方式:按照lregion的地址从大到小排列.
- */
-static inline int
-lregion_comp(log_region_t *a, log_region_t *b)
-{
-	uintptr_t a_addr = (uintptr_t)a;
-	uintptr_t b_addr = (uintptr_t)b;
-
-	int ret = ((a_addr > b_addr) - (a_addr < b_addr));
-
-	return ret;
-}
-
-
-
-rb_gen(UNUSED static, lregion_tree_, lregion_tree_t, log_region_t,
-	   lregion_link, lregion_comp)
 
 
 /******************************************************************************/
@@ -113,7 +94,7 @@ arena_lchunk_init_spare(arena_t *arena)
 	lchunk->arena = arena;
 	lchunk->tail = (void *)(((intptr_t)lchunk) + sizeof(log_chunk_t));
 	lchunk->tail = (void *)ALIGNMENT_CEILING((intptr_t)lchunk->tail, sizeof(long long));
-	lregion_tree_new(&lchunk->lregions);
+	ql_new(&lchunk->lregions);
 	return lchunk;
 }
 
@@ -139,7 +120,7 @@ arena_lchunk_init_hard(arena_t *arena)
 
 	lchunk->tail = (void *)(((intptr_t)lchunk) + sizeof(log_chunk_t));
 	lchunk->tail = (void *)ALIGNMENT_CEILING((intptr_t)lchunk->tail, sizeof(long long));
-	lregion_tree_new(&lchunk->lregions);
+	ql_new(&lchunk->lregions);
 	return lchunk;
 }
 
@@ -224,11 +205,9 @@ arena_lchunk_append_copy(arena_t *arena, log_chunk_t *lchunk, log_region_t *lreg
 
 	memcpy(new_lregion, lregion, size);
 	/* tree_link和用户保留的地址需要被更新 */
-	new_lregion->lregion_link.rbn_left = 0;
-	new_lregion->lregion_link.rbn_right_red = 0;
 	*(new_lregion->ptr) = lregion_to_user_pointer(new_lregion);
-
-	lregion_tree_insert(&lchunk->lregions, new_lregion);
+	ql_elm_new(new_lregion,lregion_link);
+	ql_tail_insert(&lchunk->lregions, new_lregion,lregion_link);
 }
 
 /* 转移一个lregion */
@@ -247,6 +226,7 @@ arena_dirty_lregion_migrate(log_chunk_t *lchunk, arena_t *arena, log_region_t *l
 	{
 		arena->gc_lchunk = log_chunk_alloc(arena);
 	}
+	
 	log_chunk_t *gc_lchunk = arena->gc_lchunk;
 	arena_lchunk_append_copy(arena, gc_lchunk, lregion, size);
 }
@@ -256,17 +236,17 @@ arena_dirty_lregion_migrate(log_chunk_t *lchunk, arena_t *arena, log_region_t *l
  * 大体功能:迭代所有lregion,将还在活跃的数据进行转移
  */
 static void
-arena_do_dirty_lchunk_gc(arena_t *arena, log_chunk_t *lchunk)
+arena_do_dirty_lchunk_gc(arena_t *arena, log_chunk_t *lchunk,unsigned short local_lid)
 {
-	log_region_t *lregion = lregion_tree_first(&lchunk->lregions);
+	log_region_t *lregion = ql_first(&lchunk->lregions);
 	while (lregion != NULL)
 	{
-		if (lregion->lregion_lid == lid && ((lregion->attr & 1UL) == 0))
+		if (lregion->lregion_lid == local_lid && ((lregion->attr & 1UL) == 0))
 		{
 			arena_dirty_lregion_migrate(lchunk, arena, lregion);
 			lchunk->size_dirty += lregion->size;
 		}
-		lregion = lregion_tree_next(&lchunk->lregions, lregion);
+		lregion = ql_next(&lchunk->lregions, lregion,lregion_link);
 	}
 }
 
@@ -279,13 +259,14 @@ arena_do_dirty_lchunk_gc(arena_t *arena, log_chunk_t *lchunk)
 static void
 arena_gc_own(arena_t *arena)
 {
+	unsigned short local_lid = lid;
 	log_chunk_t *lchunk = ql_first(&arena->lchunks_dirty);
 	log_chunk_t *lchunktodel;
 	bool todel = false;
 	while (lchunk != NULL)
 	{
 		/* 实际gc迭代到的lchunk的入口 */
-		arena_do_dirty_lchunk_gc(arena, lchunk);
+		arena_do_dirty_lchunk_gc(arena, lchunk,local_lid);
 		/* 检查是否完成全部gc,可以释放 */
 		if (lchunk->size_dirty == ((intptr_t)lchunk->tail - (intptr_t)lchunk - sizeof(log_chunk_t)))
 		{
@@ -333,8 +314,8 @@ arena_alloc_lregion(arena_t *arena, size_t size, bool zero, void **ptr)
 	lregion->ptr = ptr;
 	lregion->lregion_lid = lid;
 	lregion->size = size;
-
-	lregion_tree_insert(&lchunk->lregions, lregion);
+	ql_elm_new(lregion,lregion_link);
+	ql_tail_insert(&lchunk->lregions, lregion,lregion_link);
 
 	return lregion;
 }
