@@ -1872,7 +1872,7 @@ arena_log_malloc(arena_t *arena, size_t size, bool zero, void **ptr)
 	{
 		///***hpyhpyhpy
 		//arena_gc_own(arena, get_tid());
-		arena_gc_own(arena);  //函数内部未改
+		arena_gc_own(arena);  
 	}
 
 	/* 分配的大小需要加上header的大小,同时对齐到8字节 */
