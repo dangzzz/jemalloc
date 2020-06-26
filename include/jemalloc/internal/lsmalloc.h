@@ -35,8 +35,8 @@ struct log_region_s{
     /* 用户用来保存malloc返回指针的地址 */
 	void  					**ptr;
 
-    /* 所属线程id */
-	pid_t 					pid;
+	/*用于标识线程*/
+	unsigned int 			lregion_lid;
 
 };
 typedef rb_tree(log_region_t) lregion_tree_t;
