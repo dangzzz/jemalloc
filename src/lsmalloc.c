@@ -4,6 +4,11 @@
 /******************************************************************************/
 /* Data. */
 
+/*用于更新lid*/
+unsigned short lthread_cnt = 0;
+/*每个线程拥有不同的lid，用于标识线程*/
+__thread unsigned short lid = 0;  
+
 /******************************************************************************/
 /*
  * Function prototypes for static functions that are referenced prior to
@@ -33,53 +38,6 @@ lregion_comp(log_region_t *a, log_region_t *b)
 rb_gen(UNUSED static, lregion_tree_, lregion_tree_t, log_region_t,
 	   lregion_link, lregion_comp)
 
-/* 
- * 可用的lchunk在arena里管理的红黑树,对应arena->lchunks_avail.
- * lchunk_avail_comp提供了树的排序方式:首先按照未分配的可用空间大小排序,相等时,按照起始地址大小排序.
- * 通过按照未分配的可用空间大小排序,可以让剩余最大空间的lchunk在前,缩短搜寻时间.
- */
-static inline int lchunk_avail_comp(log_chunk_t *a, log_chunk_t *b)
-{
-
-	int ret;
-
-	size_t a_size = (intptr_t)a + chunksize - (intptr_t)a->tail;
-	size_t b_size = (intptr_t)b + chunksize - (intptr_t)b->tail;
-
-	ret = (a_size > b_size) - (a_size < b_size);
-	if (ret == 0)
-	{ //a_size == b_size
-		uintptr_t a_addr, b_addr;
-
-		a_addr = (uintptr_t)a;
-		b_addr = (uintptr_t)b;
-
-		ret = (a_addr > b_addr) - (a_addr < b_addr);
-	}
-
-	return (ret);
-}
-
-rb_gen(UNUSED, lchunk_avail_tree_, lchunk_avail_tree_t, log_chunk_t,
-	   avail_link, lchunk_avail_comp)
-
-	/* 
- * 等待垃圾回收的lchunk在arena里管理的红黑树,对应arena->lchunks_dirty.
- * lchunk_avail_comp提供了树的排序方式:按照起始地址大小排序.
- */
-	static inline int lchunk_dirty_comp(log_chunk_t *a, log_chunk_t *b)
-{
-	uintptr_t a_addr = (uintptr_t)a;
-	uintptr_t b_addr = (uintptr_t)b;
-
-	assert(a != NULL);
-	assert(b != NULL);
-
-	return ((a_addr > b_addr) - (a_addr < b_addr));
-}
-
-rb_gen(UNUSED, lchunk_dirty_tree_, lchunk_dirty_tree_t, log_chunk_t,
-	   dirty_link, lchunk_dirty_comp)
 
 /******************************************************************************/
 /*Inline tool function*/
@@ -126,9 +84,9 @@ static inline void *
 arena_lchunk_append_to_tail(arena_t *arena, log_chunk_t *lchunk, size_t size)
 {
 	void *ret = lchunk->tail;
-	lchunk_avail_tree_remove(&arena->lchunks_avail, lchunk);
+
 	lchunk->tail = (void *)((intptr_t)lchunk->tail + size);
-	lchunk_avail_tree_insert(&arena->lchunks_avail, lchunk);
+
 	return ret;
 }
 
@@ -200,7 +158,8 @@ log_chunk_alloc(arena_t *arena)
 			return (NULL);
 	//}
 
-	lchunk_avail_tree_insert(&arena->lchunks_avail, lchunk);
+	ql_elm_new(lchunk,avail_link);
+	ql_head_insert(&arena->lchunks_avail,lchunk,avail_link);
 
 	return lchunk;
 }
@@ -210,19 +169,19 @@ static void
 log_chunk_dealloc(arena_t *arena, log_chunk_t *lchunk)
 {
 
-	lchunk_dirty_tree_remove(&arena->lchunks_dirty, lchunk);
+	ql_remove(&arena->lchunks_dirty,lchunk,dirty_link);
 
-	if (arena->lspare != NULL)
-	{
-		log_chunk_t *lspare = arena->lspare;
+//	if (arena->lspare != NULL)
+//	{
+//		log_chunk_t *lspare = arena->lspare;
 
-		arena->lspare = lchunk;
+//		arena->lspare = lchunk;
 		malloc_mutex_unlock(&arena->lock);
-		chunk_dealloc((void *)lspare, chunksize, true);
+		chunk_dealloc((void *)lchunk, chunksize, true);
 		malloc_mutex_lock(&arena->lock);
-	}
-	else
-		arena->lspare = lchunk;
+//	}
+//	else
+//		arena->lspare = lchunk;
 }
 
 /* mark指将需要gc的lchunk从arena->lchunks_avail转移到arena->lchunks_dirty */
@@ -234,28 +193,22 @@ static void
 arena_gc_mark_lchunk(arena_t *arena)
 {
 	/* 迭代availtree,判断是否需要gc并加入dirtytree */
-	log_chunk_t *lchunk = lchunk_avail_tree_first(&arena->lchunks_avail);
-	while (lchunk != NULL)
-	{
-		if (lchunk_need_gc(lchunk))
-		{
-			lchunk_dirty_tree_insert(&arena->lchunks_dirty, lchunk);
+	log_chunk_t *lchunk = ql_first(&arena->lchunks_avail);
+	log_chunk_t *lchunkdel;
+	bool todel = false;
+	while(lchunk!=NULL){
+		if(lchunk_need_gc(lchunk)){
+			lchunkdel = lchunk;
+			ql_elm_new(lchunk,dirty_link);
+			ql_tail_insert(&arena->lchunks_dirty,lchunk,dirty_link);
+			todel =true;
 		}
-		lchunk = lchunk_avail_tree_next(&arena->lchunks_avail, lchunk);
-	}
-
-	/* 加入dirtytree的全部在availtree中删除 */
-	//todo:合并这两个过程
-	log_chunk_t *lchunk2 = lchunk_dirty_tree_first(&arena->lchunks_dirty);
-	while (lchunk2 != NULL)
-	{
-		if (arena->gc_lchunk == lchunk2)
-		{
-			arena->gc_lchunk = NULL;
+		lchunk=ql_next(&arena->lchunks_avail,lchunk,avail_link);
+		if(todel){
+			ql_remove(&arena->lchunks_avail,lchunkdel,avail_link);
+			todel = false;
 		}
-		lchunk_avail_tree_remove(&arena->lchunks_avail, lchunk2);
 
-		lchunk2 = lchunk_dirty_tree_next(&arena->lchunks_dirty, lchunk2);
 	}
 
 	return;
@@ -306,10 +259,9 @@ static void
 arena_do_dirty_lchunk_gc(arena_t *arena, log_chunk_t *lchunk)
 {
 	log_region_t *lregion = lregion_tree_first(&lchunk->lregions);
-	pid_t pid = get_tid();
 	while (lregion != NULL)
 	{
-		if (lregion->pid == pid && ((lregion->attr & 1UL) == 0))
+		if (lregion->lregion_lid == lid && ((lregion->attr & 1UL) == 0))
 		{
 			arena_dirty_lregion_migrate(lchunk, arena, lregion);
 			lchunk->size_dirty += lregion->size;
@@ -325,9 +277,9 @@ arena_do_dirty_lchunk_gc(arena_t *arena, log_chunk_t *lchunk)
  * 数据都被转移后,释放lchunk.
  */
 static void
-arena_gc_own(arena_t *arena, pid_t pid)
+arena_gc_own(arena_t *arena)
 {
-	log_chunk_t *lchunk = lchunk_dirty_tree_first(&arena->lchunks_dirty);
+	log_chunk_t *lchunk = ql_first(&arena->lchunks_dirty);
 	log_chunk_t *lchunktodel;
 	bool todel = false;
 	while (lchunk != NULL)
@@ -335,13 +287,13 @@ arena_gc_own(arena_t *arena, pid_t pid)
 		/* 实际gc迭代到的lchunk的入口 */
 		arena_do_dirty_lchunk_gc(arena, lchunk);
 		/* 检查是否完成全部gc,可以释放 */
-		if (lchunk->size_dirty == ((intptr_t)lchunk->tail - (intptr_t)lchunk - sizeof(log_chunk_t)));
+		if (lchunk->size_dirty == ((intptr_t)lchunk->tail - (intptr_t)lchunk - sizeof(log_chunk_t)))
 		{
 			todel = true;
 			lchunktodel = lchunk;
 		}
 
-		lchunk = lchunk_dirty_tree_next(&arena->lchunks_dirty, lchunk);
+		lchunk = ql_next(&arena->lchunks_dirty, lchunk,dirty_link);
 
 		/* 实际释放lchunk */
 		if (todel)
@@ -362,7 +314,11 @@ arena_alloc_lregion(arena_t *arena, size_t size, bool zero, void **ptr)
 
 	/* 构造用于查询的key,查询到一个空闲空间大于size的lchunk */
 	key.tail = (void *)((intptr_t)&key + chunksize - size);
-	lchunk = lchunk_avail_tree_nsearch(&arena->lchunks_avail, &key);
+	lchunk = ql_first(&arena->lchunks_avail);
+
+	if((lchunk!=NULL)&&(chunksize+(intptr_t)lchunk-(intptr_t)(lchunk->tail)<size)){
+		lchunk = NULL;
+	}
 
 	if (lchunk == NULL)
 	{
@@ -371,9 +327,11 @@ arena_alloc_lregion(arena_t *arena, size_t size, bool zero, void **ptr)
 			return NULL;
 	}
 
+
+
 	lregion = arena_lchunk_append_to_tail(arena, lchunk, size);
 	lregion->ptr = ptr;
-	lregion->pid = get_tid();
+	lregion->lregion_lid = lid;
 	lregion->size = size;
 
 	lregion_tree_insert(&lchunk->lregions, lregion);
@@ -388,9 +346,9 @@ log_maybe_purge(arena_t *arena)
 
 	if (arena->nop >= GC_NOP)
 	{
-		pid_t pid = get_tid();
+		
 		arena_gc_mark_lchunk(arena);
-		arena_gc_own(arena, pid);
+		arena_gc_own(arena);
 		arena->nop = 0;
 	}
 	return;
@@ -436,10 +394,17 @@ arena_log_malloc(arena_t *arena, size_t size, bool zero, void **ptr)
 	malloc_mutex_lock(&arena->lock);
 	arena->nop++;
 
+
+	/*每个线程有不同的lid*/
+	if (lid == 0) 
+	{
+		lthread_cnt = lthread_cnt + 1; //有arena锁 
+		lid = lthread_cnt;
+	}
 	/* 每个线程完成自己垃圾回收,目前没有条件 */
 	if (true)
 	{
-		arena_gc_own(arena, get_tid());
+		arena_gc_own(arena);
 	}
 
 	/* 分配的大小需要加上header的大小,同时对齐到8字节 */

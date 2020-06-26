@@ -2343,8 +2343,8 @@ arena_new(arena_t *arena, unsigned ind)
 	arena->nop = 0;
 	arena->gc_lchunk = NULL;
 
-	lchunk_avail_tree_new(&arena->lchunks_avail);
-	lchunk_dirty_tree_new(&arena->lchunks_dirty);
+	ql_new(&arena->lchunks_avail);
+	ql_new(&arena->lchunks_dirty);
 
 #endif
 

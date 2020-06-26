@@ -8,17 +8,18 @@ struct {								\
 
 #define	ql_head_initializer(a_head) {NULL}
 
+//next,prev双指针
 #define	ql_elm(a_type)	qr(a_type)
 
 /* List functions. */
 #define	ql_new(a_head) do {						\
 	(a_head)->qlh_first = NULL;					\
 } while (0)
-
+//让next和prev都指向自身
 #define	ql_elm_new(a_elm, a_field) qr_new((a_elm), a_field)
 
 #define	ql_first(a_head) ((a_head)->qlh_first)
-
+//first的prev就是last
 #define	ql_last(a_head, a_field)					\
 	((ql_first(a_head) != NULL)					\
 	    ? qr_prev(ql_first(a_head), a_field) : NULL)

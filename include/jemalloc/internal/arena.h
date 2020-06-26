@@ -318,10 +318,10 @@ struct arena_s {
 	//以下操作受arena->lock保护
 
 	/* 可用chunk的树,对应lchunk->avail_link */
-	lchunk_avail_tree_t 	lchunks_avail;
+	ql_head(log_chunk_t) 	lchunks_avail;
 
 	/* 需要垃圾回收的chunk的树,对应lchunk->dirty_link */
-	lchunk_dirty_tree_t		lchunks_dirty;
+	ql_head(log_chunk_t)	lchunks_dirty;
 
 	/* 为了避免"释放-马上分配"操作的低效,会保留一个lchunk不被释放,如果需要分配时使用该lchunk */
 	log_chunk_t 			*lspare;

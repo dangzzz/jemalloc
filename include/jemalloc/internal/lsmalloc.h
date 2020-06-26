@@ -35,8 +35,8 @@ struct log_region_s{
     /* 用户用来保存malloc返回指针的地址 */
 	void  					**ptr;
 
-    /* 所属线程id */
-	pid_t 					pid;
+	/*用于标识线程*/
+	unsigned short 			lregion_lid; 
 
 };
 typedef rb_tree(log_region_t) lregion_tree_t;
@@ -54,10 +54,10 @@ struct log_chunk_s{
 	arena_t					*arena;
 
 	/* 可用lchunk链接,对应arena->lchunks_avail */
-	rb_node(log_chunk_t)	avail_link;
+	ql_elm(log_chunk_t)	avail_link;
 
 	/* 脏lchunk链接,垃圾回收时使用,对应arena->lchunks_dirty*/
-	rb_node(log_chunk_t)	dirty_link;
+	ql_elm(log_chunk_t)	dirty_link;
 
 	/* 脏数据所占的大小 */
 	size_t					size_dirty;
