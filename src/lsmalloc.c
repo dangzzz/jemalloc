@@ -238,31 +238,22 @@ log_chunk_dealloc(arena_t *arena, log_chunk_t *lchunk)
 static void
 arena_gc_mark_lchunk(arena_t *arena)
 {
-	/* 迭代availtree,判断是否需要gc并加入dirtytree */
+	/* 迭代availtree,判断是否需要gc并加入dirtytree，并从availtree中删除相应lchunk */
 	log_chunk_t *lchunk = lchunk_avail_tree_first(&arena->lchunks_avail);
 	while (lchunk != NULL)
 	{
+		log_chunk_t *lchunk_tmp = NULL;
 		if (lchunk_need_gc(lchunk))
 		{
+			lchunk_tmp = lchunk;
 			lchunk_dirty_tree_insert(&arena->lchunks_dirty, lchunk);
 		}
 		lchunk = lchunk_avail_tree_next(&arena->lchunks_avail, lchunk);
-	}
-
-	/* 加入dirtytree的全部在availtree中删除 */
-	//todo:合并这两个过程
-	log_chunk_t *lchunk2 = lchunk_dirty_tree_first(&arena->lchunks_dirty);
-	while (lchunk2 != NULL)
-	{
-		if (arena->gc_lchunk == lchunk2)
+		if (lchunk_tmp != NULL) 
 		{
-			arena->gc_lchunk = NULL;
+			lchunk_avail_tree_remove(&arena->lchunks_avail, lchunk_tmp);
 		}
-		lchunk_avail_tree_remove(&arena->lchunks_avail, lchunk2);
-
-		lchunk2 = lchunk_dirty_tree_next(&arena->lchunks_dirty, lchunk2);
 	}
-
 	return;
 }
 
