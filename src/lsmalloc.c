@@ -8,7 +8,10 @@
 unsigned short lthread_cnt = 0;
 /*每个线程拥有不同的lid，用于标识线程*/
 __thread unsigned short lid = 0;  
-
+int countf=0;
+int live_lchunk=0;
+int live_avail=0;
+int live_dirty = 0;
 /******************************************************************************/
 /*
  * Function prototypes for static functions that are referenced prior to
@@ -46,6 +49,7 @@ chunksize_beforetail(log_chunk_t *lchunk)
 static inline bool
 lchunk_need_gc(log_chunk_t *lchunk)
 {
+	countf++;
 	if (((float)chunksize_beforetail(lchunk) / (float)chunksize) > GC_TAIL_RATE)
 	{
 		if ((lchunk->size_dirty) / ((float)chunksize_beforetail(lchunk)) > GC_DIRTY_RATE)
@@ -110,6 +114,7 @@ arena_lchunk_init_hard(arena_t *arena)
 	lchunk = (log_chunk_t *)chunk_alloc(chunksize, chunksize, false,
 										&zero, arena->dss_prec);
 	malloc_mutex_lock(&arena->lock);
+	live_lchunk++;
 	if (lchunk == NULL)
 		return (NULL);
 
@@ -141,6 +146,7 @@ log_chunk_alloc(arena_t *arena)
 
 	ql_elm_new(lchunk,avail_link);
 	ql_head_insert(&arena->lchunks_avail,lchunk,avail_link);
+	live_avail++;
 
 	return lchunk;
 }
@@ -151,7 +157,7 @@ log_chunk_dealloc(arena_t *arena, log_chunk_t *lchunk)
 {
 
 	ql_remove(&arena->lchunks_dirty,lchunk,dirty_link);
-
+	live_dirty--;
 //	if (arena->lspare != NULL)
 //	{
 //		log_chunk_t *lspare = arena->lspare;
@@ -159,6 +165,7 @@ log_chunk_dealloc(arena_t *arena, log_chunk_t *lchunk)
 //		arena->lspare = lchunk;
 		malloc_mutex_unlock(&arena->lock);
 		chunk_dealloc((void *)lchunk, chunksize, true);
+		live_lchunk--;
 		malloc_mutex_lock(&arena->lock);
 //	}
 //	else
@@ -182,11 +189,13 @@ arena_gc_mark_lchunk(arena_t *arena)
 			lchunkdel = lchunk;
 			ql_elm_new(lchunk,dirty_link);
 			ql_tail_insert(&arena->lchunks_dirty,lchunk,dirty_link);
+			live_dirty++;
 			todel =true;
 		}
 		lchunk=ql_next(&arena->lchunks_avail,lchunk,avail_link);
 		if(todel){
 			ql_remove(&arena->lchunks_avail,lchunkdel,avail_link);
+			live_avail--;
 			todel = false;
 		}
 
@@ -208,6 +217,7 @@ arena_lchunk_append_copy(arena_t *arena, log_chunk_t *lchunk, log_region_t *lreg
 	*(new_lregion->ptr) = lregion_to_user_pointer(new_lregion);
 	ql_elm_new(new_lregion,lregion_link);
 	ql_tail_insert(&lchunk->lregions, new_lregion,lregion_link);
+	
 }
 
 /* 转移一个lregion */
@@ -216,18 +226,17 @@ arena_dirty_lregion_migrate(log_chunk_t *lchunk, arena_t *arena, log_region_t *l
 {
 	size_t size = lregion->size;
 
-	/* arena->gc_lchunk需要创建一个新的当满足以下任一条件:
-	 * 1.arena->gc_lchunk为空
-	 * 2.arena->gc_lchunk放不下当前lregion
-	 * 3.arena->gc_lchunk正是正在被gc的lchunk
-	 * 4.todo:arena->gc_lchunk不是正在被gc的lchunk,但是也在被gc
+	/* gc_lchunk需要创建一个新的当满足以下任一条件:
+	 * 1.gc_lchunk为空
+	 * 2.gc_lchunk放不下当前lregion
+	 * 3.gc_lchunk正是正在被gc的lchunk
+	 * 4.todo:gc_lchunk不是正在被gc的lchunk,但是也在被gc
 	 */
-	if ((arena->gc_lchunk == NULL) || (lchunk == arena->gc_lchunk) || ((intptr_t)(arena->gc_lchunk->tail) + size - (intptr_t)arena->gc_lchunk >= chunksize))
+	log_chunk_t *gc_lchunk = ql_first(&arena->lchunks_avail);
+	if ((gc_lchunk == NULL) || (lchunk == gc_lchunk) || ((intptr_t)(gc_lchunk->tail) + size - (intptr_t)gc_lchunk >= chunksize))
 	{
-		arena->gc_lchunk = log_chunk_alloc(arena);
+		gc_lchunk = log_chunk_alloc(arena);
 	}
-	
-	log_chunk_t *gc_lchunk = arena->gc_lchunk;
 	arena_lchunk_append_copy(arena, gc_lchunk, lregion, size);
 }
 

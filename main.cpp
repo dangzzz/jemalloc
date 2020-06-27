@@ -285,7 +285,7 @@ int main(int argc, char *argv[])
 {	
 	//ProfilerStart("jemalloc_gperftools_result");
 	ProfilerStart("lsmalloc_gperftools_result");
-    srand((unsigned)time(NULL));
+    
 	/*withou maxRSS
 	memset(rd_addr, -1, sizeof(rd_addr)); //useless
 	memset(rd_sz, -1, sizeof(rd_sz)); //useless
@@ -294,7 +294,9 @@ int main(int argc, char *argv[])
 	printf("%llu\n", getRSS()); //useless
 	printf("%llu %llu\n", (ull)rd_addr[rand()%100000], (ull)rd_sz[rand()%100000]); //useless
 */
+	for(int ii = 0;ii<5;ii++){
 
+	srand((unsigned)time(NULL));
 	malloc_time = 0;
 	free_time = 0;
 
@@ -316,7 +318,13 @@ int main(int argc, char *argv[])
 			free_one(i);
 		}
 	}
-
+	printf("live_lchunk:%d.\n",live_lchunk);
+	printf("live_avail:%d.\n",live_avail);
+	printf("live_dirty:%d.\n",live_dirty);
+	int *abc;
+	log_malloc(123,(void**)&abc);
+	}
+	printf("countf:%d.\n",countf);
 /*	
 	if (test_flag == 2)
 		printf("tot_before_num = %llu\ntot_after_num = %llu, before/all=%.2f\n", 
