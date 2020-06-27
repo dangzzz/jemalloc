@@ -71,8 +71,8 @@ ull getRSS()
 void malloc_one(ull sz)
 { 
 
-	rd_addr[alloc_object_num] = log_malloc(sz, &rd_addr[alloc_object_num]);
-//	rd_addr[alloc_object_num] = yesmalloc(sz);
+//	rd_addr[alloc_object_num] = log_malloc(sz, &rd_addr[alloc_object_num]);
+	rd_addr[alloc_object_num] = yesmalloc(sz);
 
 	malloc_time += (e_time.tv_sec-s_time.tv_sec)*1000000+(e_time.tv_usec-s_time.tv_usec);
 	
@@ -90,8 +90,8 @@ void free_one(ull x)
 	live_sz -= rd_sz[x];
 
 
-	log_free(rd_addr[x]);
-//	yesfree(rd_addr[x]);
+//	log_free(rd_addr[x]);
+	yesfree(rd_addr[x]);
 
 	free_time += (e_time.tv_sec-s_time.tv_sec)*1000000+(e_time.tv_usec-s_time.tv_usec);
 //	printf("%llu\n", free_time);
@@ -284,7 +284,7 @@ ull test()
 int main(int argc, char *argv[])
 {	
 	//ProfilerStart("jemalloc_gperftools_result");
-	ProfilerStart("lsmalloc_gperftools_result");
+	ProfilerStart("jemalloc_gperftools_result");
     
 	/*withou maxRSS
 	memset(rd_addr, -1, sizeof(rd_addr)); //useless
@@ -294,7 +294,7 @@ int main(int argc, char *argv[])
 	printf("%llu\n", getRSS()); //useless
 	printf("%llu %llu\n", (ull)rd_addr[rand()%100000], (ull)rd_sz[rand()%100000]); //useless
 */
-	for(int ii = 0;ii<5;ii++){
+	for(int ii = 0;ii<10;ii++){
 
 	srand((unsigned)time(NULL));
 	malloc_time = 0;
@@ -318,13 +318,12 @@ int main(int argc, char *argv[])
 			free_one(i);
 		}
 	}
-	printf("live_lchunk:%d.\n",live_lchunk);
-	printf("live_avail:%d.\n",live_avail);
-	printf("live_dirty:%d.\n",live_dirty);
-	int *abc;
-	log_malloc(123,(void**)&abc);
+///	printf("live_lchunk:%d.\n",live_lchunk);
+//	printf("live_avail:%d.\n",live_avail);
+//	printf("live_dirty:%d.\n",live_dirty);
+
 	}
-	printf("countf:%d.\n",countf);
+//	printf("countf:%d.\n",countf);
 /*	
 	if (test_flag == 2)
 		printf("tot_before_num = %llu\ntot_after_num = %llu, before/all=%.2f\n", 
