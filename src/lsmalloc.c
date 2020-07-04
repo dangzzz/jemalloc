@@ -1,6 +1,6 @@
 #define JEMALLOC_LSMALLOC_C_
 #include "jemalloc/internal/jemalloc_internal.h"
-
+#include "libpmem.h"
 /******************************************************************************/
 /* Data. */
 
@@ -12,6 +12,7 @@ int countf=0;
 int live_lchunk=0;
 int live_avail=0;
 int live_dirty = 0;
+int mmap_file=0;
 /******************************************************************************/
 /*
  * Function prototypes for static functions that are referenced prior to
@@ -102,6 +103,27 @@ arena_lchunk_init_spare(arena_t *arena)
 	return lchunk;
 }
 
+
+
+
+void*
+pmem_chunk_alloc(size_t size, size_t alignment, bool base, bool *zero,
+    dss_prec_t dss_prec){
+	void *ret;
+	char str[25];
+	size_t mapped_len;
+	int is_pmem;
+
+	sprintf(str,"/mnt/pmem/%d",mmap_file);
+	mmap_file++;
+	if((ret=pmem_map_file(str,4096,PMEM_FILE_CREATE,0666,&mapped_len, &is_pmem))==NULL){
+		perror("pmem_map_file");
+		exit(1);
+	}
+	return ret;
+}
+
+
 /* mmap 一个 lchunk,并完成初始化 */
 static log_chunk_t *
 arena_lchunk_init_hard(arena_t *arena)
@@ -111,7 +133,7 @@ arena_lchunk_init_hard(arena_t *arena)
 
 	zero = false;
 	malloc_mutex_unlock(&arena->lock);
-	lchunk = (log_chunk_t *)chunk_alloc(chunksize, chunksize, false,
+	lchunk = (log_chunk_t *)pmem_chunk_alloc(chunksize, chunksize, false,
 										&zero, arena->dss_prec);
 	malloc_mutex_lock(&arena->lock);
 	live_lchunk++;
@@ -151,6 +173,11 @@ log_chunk_alloc(arena_t *arena)
 	return lchunk;
 }
 
+void
+pmem_chunk_dealloc(void *chunk, size_t size, bool unmap){
+	pmem_unmap(chunk,size);
+}
+
 /* 释放一个lchunk.过程是先放在arena->lspare,然后再释放 */
 static void
 log_chunk_dealloc(arena_t *arena, log_chunk_t *lchunk)
@@ -164,7 +191,7 @@ log_chunk_dealloc(arena_t *arena, log_chunk_t *lchunk)
 
 //		arena->lspare = lchunk;
 		malloc_mutex_unlock(&arena->lock);
-		chunk_dealloc((void *)lchunk, chunksize, true);
+		pmem_chunk_dealloc((void *)lchunk, chunksize, true);
 		live_lchunk--;
 		malloc_mutex_lock(&arena->lock);
 //	}
