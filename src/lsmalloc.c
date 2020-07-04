@@ -121,8 +121,8 @@ pmem_chunk_alloc(size_t size, size_t alignment, bool base, bool *zero,
 		exit(1);
 	}
 	ret = (void*)ALIGNMENT_CEILING((uintptr_t)addr,alignment);
-	pmem_unmap(addr,((intptr_t)ret-(intptr_t)addr)/8);
-	pmem_unmap((void*)((intptr_t)ret+size),((intptr_t)addr+size-(intptr_t)ret)/8);
+	pmem_unmap(addr,((intptr_t)ret-(intptr_t)addr));
+	pmem_unmap((void*)((intptr_t)ret+size),((intptr_t)addr+size-(intptr_t)ret));
 	return ret;
 }
 

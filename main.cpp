@@ -8,7 +8,7 @@
 #include <string.h>
 #include <sys/time.h>
 #include "jemalloc.h"
-#include <gperftools/profiler.h>
+
 using namespace std;
 
 typedef unsigned long long ull;
@@ -71,8 +71,8 @@ ull getRSS()
 void malloc_one(ull sz)
 { 
 
-//	rd_addr[alloc_object_num] = log_malloc(sz, &rd_addr[alloc_object_num]);
-	rd_addr[alloc_object_num] = yesmalloc(sz);
+	rd_addr[alloc_object_num] = log_malloc(sz, &rd_addr[alloc_object_num]);
+	//rd_addr[alloc_object_num] = yesmalloc(sz);
 
 	malloc_time += (e_time.tv_sec-s_time.tv_sec)*1000000+(e_time.tv_usec-s_time.tv_usec);
 	
@@ -90,8 +90,8 @@ void free_one(ull x)
 	live_sz -= rd_sz[x];
 
 
-//	log_free(rd_addr[x]);
-	yesfree(rd_addr[x]);
+	log_free(rd_addr[x]);
+//	yesfree(rd_addr[x]);
 
 	free_time += (e_time.tv_sec-s_time.tv_sec)*1000000+(e_time.tv_usec-s_time.tv_usec);
 //	printf("%llu\n", free_time);
@@ -284,7 +284,7 @@ ull test()
 int main(int argc, char *argv[])
 {	
 	//ProfilerStart("jemalloc_gperftools_result");
-	ProfilerStart("jemalloc_gperftools_result");
+//	ProfilerStart("jemalloc_gperftools_result");
     
 	/*withou maxRSS
 	memset(rd_addr, -1, sizeof(rd_addr)); //useless
@@ -333,6 +333,6 @@ int main(int argc, char *argv[])
 	printf("malloc_time: %llu\nfree_time:   %llu\ntot_time:    %llu\n", 
 			malloc_time, free_time, malloc_time + free_time);
 */	
-	ProfilerStop();
+//	ProfilerStop();
 	return 0;	
 }
