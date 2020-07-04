@@ -109,17 +109,20 @@ arena_lchunk_init_spare(arena_t *arena)
 void*
 pmem_chunk_alloc(size_t size, size_t alignment, bool base, bool *zero,
     dss_prec_t dss_prec){
-	void *ret;
+	void *ret,*addr;
 	char str[25];
 	size_t mapped_len;
 	int is_pmem;
 
 	sprintf(str,"/mnt/pmem/%d",mmap_file);
 	mmap_file++;
-	if((ret=pmem_map_file(str,4096,PMEM_FILE_CREATE,0666,&mapped_len, &is_pmem))==NULL){
+	if((addr=pmem_map_file(str,2*size,PMEM_FILE_CREATE,0666,&mapped_len, &is_pmem))==NULL){
 		perror("pmem_map_file");
 		exit(1);
 	}
+	ret = (void*)ALIGNMENT_CEILING((uintptr_t)addr,alignment);
+	pmem_unmap(addr,((intptr_t)ret-(intptr_t)addr)/8);
+	pmem_unmap((void*)((intptr_t)ret+size),((intptr_t)addr+size-(intptr_t)ret)/8);
 	return ret;
 }
 
