@@ -12,6 +12,9 @@ typedef struct log_region_s log_region_t;
 /* 尾前数据/总数据 > GC_TAIL_RATE后,lchunk需要gc */
 #define GC_TAIL_RATE		0.9
 
+/* epoch-based migration 超过这个阈值的gc次数后强制gc */
+#define GC_FORCE			10
+
 
 #define GC_NOP 				1000
 
@@ -64,6 +67,14 @@ struct log_chunk_s{
 	
     /* 当前已被分配的数据的尾指针.在尾指针之前的空间全部被分配过. */
 	void					*tail;
+
+	/* 对应的文件 */
+	int				file_no;
+
+	/* gc次数 */
+
+	int 					ngc;
+
 
 };
 typedef rb_tree(log_chunk_t) lchunk_avail_tree_t;

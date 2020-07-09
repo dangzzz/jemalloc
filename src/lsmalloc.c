@@ -58,6 +58,10 @@ lchunk_need_gc(log_chunk_t *lchunk)
 			return true;
 		}
 	}
+
+	if(lchunk->ngc > GC_FORCE){
+		return true;
+	}
 	return false;
 }
 
@@ -110,12 +114,25 @@ void*
 pmem_chunk_alloc(size_t size, size_t alignment, bool base, bool *zero,
     dss_prec_t dss_prec){
 	void *ret,*addr;
-	char str[25];
+	char str[32];
 	size_t mapped_len;
 	int is_pmem;
 
 	sprintf(str,"/mnt/pmem/%d",mmap_file);
 	mmap_file++;
+
+	if((addr=pmem_map_file(str,size,PMEM_FILE_CREATE,0666,&mapped_len, &is_pmem))==NULL){
+		perror("pmem_map_file");
+		exit(1);
+	}
+	if((uintptr_t)addr==ALIGNMENT_CEILING((uintptr_t)addr,alignment)){
+		ret = addr;
+		((log_chunk_t *)addr)->file_no = mmap_file-1;
+		return ret;
+	}
+	pmem_unmap(addr,size);
+	remove(str);
+	
 	if((addr=pmem_map_file(str,2*size,PMEM_FILE_CREATE,0666,&mapped_len, &is_pmem))==NULL){
 		perror("pmem_map_file");
 		exit(1);
@@ -123,6 +140,7 @@ pmem_chunk_alloc(size_t size, size_t alignment, bool base, bool *zero,
 	ret = (void*)ALIGNMENT_CEILING((uintptr_t)addr,alignment);
 	pmem_unmap(addr,((intptr_t)ret-(intptr_t)addr));
 	pmem_unmap((void*)((intptr_t)ret+size),((intptr_t)addr+size-(intptr_t)ret));
+	((log_chunk_t *)ret)->file_no = mmap_file-1;
 	return ret;
 }
 
@@ -146,6 +164,8 @@ arena_lchunk_init_hard(arena_t *arena)
 	lchunk->logchunk = true;
 	lchunk->arena = arena;
 	
+	lchunk->ngc = 0;
+
 	lchunk->size_dirty = 0;
 
 	lchunk->tail = (void *)(((intptr_t)lchunk) + sizeof(log_chunk_t));
@@ -177,8 +197,12 @@ log_chunk_alloc(arena_t *arena)
 }
 
 void
-pmem_chunk_dealloc(void *chunk, size_t size, bool unmap){
+pmem_chunk_dealloc(log_chunk_t *chunk, size_t size, bool unmap){
+	char str[32];
+
+	sprintf(str,"/mnt/pmem/%d",chunk->file_no);
 	pmem_unmap(chunk,size);
+	remove(str);
 }
 
 /* 释放一个lchunk.过程是先放在arena->lspare,然后再释放 */
@@ -194,7 +218,7 @@ log_chunk_dealloc(arena_t *arena, log_chunk_t *lchunk)
 
 //		arena->lspare = lchunk;
 		malloc_mutex_unlock(&arena->lock);
-		pmem_chunk_dealloc((void *)lchunk, chunksize, true);
+		pmem_chunk_dealloc(lchunk, chunksize, true);
 		live_lchunk--;
 		malloc_mutex_lock(&arena->lock);
 //	}
@@ -222,6 +246,7 @@ arena_gc_mark_lchunk(arena_t *arena)
 			live_dirty++;
 			todel =true;
 		}
+		lchunk->ngc++;
 		lchunk=ql_next(&arena->lchunks_avail,lchunk,avail_link);
 		if(todel){
 			ql_remove(&arena->lchunks_avail,lchunkdel,avail_link);
@@ -354,7 +379,7 @@ arena_alloc_lregion(arena_t *arena, size_t size, bool zero, void **ptr)
 	lregion->lregion_lid = lid;
 	lregion->size = size;
 	ql_elm_new(lregion,lregion_link);
-	ql_tail_insert(&lchunk->lregions, lregion,lregion_link);
+ 	ql_tail_insert(&lchunk->lregions, lregion,lregion_link);
 
 	return lregion;
 }
