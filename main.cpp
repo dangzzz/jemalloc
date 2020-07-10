@@ -318,10 +318,11 @@ int main(int argc, char *argv[])
 			free_one(i);
 		}
 	}
-///	printf("live_lchunk:%d.\n",live_lchunk);
-//	printf("live_avail:%d.\n",live_avail);
-//	printf("live_dirty:%d.\n",live_dirty);
-
+	printf("live_lchunk:%d.\n",live_lchunk);
+	printf("live_avail:%d.\n",live_avail);
+	printf("live_dirty:%d.\n",live_dirty);
+        printf("fast_time:%d.\n",fast_time);
+	printf("slow_time:%d.\n",slow_time);
 	}
 //	printf("countf:%d.\n",countf);
 /*	

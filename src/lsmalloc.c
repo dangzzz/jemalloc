@@ -13,6 +13,8 @@ int live_lchunk=0;
 int live_avail=0;
 int live_dirty = 0;
 int mmap_file=0;
+int fast_time=0;
+int slow_time=0;
 /******************************************************************************/
 /*
  * Function prototypes for static functions that are referenced prior to
@@ -127,12 +129,13 @@ pmem_chunk_alloc(size_t size, size_t alignment, bool base, bool *zero,
 	}
 	if((uintptr_t)addr==ALIGNMENT_CEILING((uintptr_t)addr,alignment)){
 		ret = addr;
+		fast_time++;
 		((log_chunk_t *)addr)->file_no = mmap_file-1;
 		return ret;
 	}
 	pmem_unmap(addr,size);
 	remove(str);
-	
+	slow_time++;
 	if((addr=pmem_map_file(str,2*size,PMEM_FILE_CREATE,0666,&mapped_len, &is_pmem))==NULL){
 		perror("pmem_map_file");
 		exit(1);
