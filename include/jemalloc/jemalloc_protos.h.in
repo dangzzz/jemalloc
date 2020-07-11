@@ -16,8 +16,7 @@ extern JEMALLOC_EXPORT void		(*@je_@malloc_message)(void *cbopaque,
 
 JEMALLOC_EXPORT void	*log_malloc(size_t size, void **ptr) JEMALLOC_ATTR(malloc);
 JEMALLOC_EXPORT void	log_free(void *ptr);
-
-JAMELLOC_EXPORT void  get_pmem_consmp();
+JEMALLOC_EXPORT unsigned long long get_pmem_consmp();
 
 #endif
 

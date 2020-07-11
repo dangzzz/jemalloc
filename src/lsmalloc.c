@@ -15,6 +15,16 @@ int live_dirty = 0;
 int mmap_file=0;
 int fast_time=0;
 int slow_time=0;
+
+unsigned long long pmem_consmp = 0;
+
+/**Function to get pmem memory consumption**/
+unsigned long long get_pmem_consmp()
+{
+	return pmem_consmp;
+}
+  
+
 /******************************************************************************/
 /*
  * Function prototypes for static functions that are referenced prior to
@@ -131,6 +141,7 @@ pmem_chunk_alloc(size_t size, size_t alignment, bool base, bool *zero,
 		ret = addr;
 		fast_time++;
 		((log_chunk_t *)addr)->file_no = mmap_file-1;
+		pmem_consmp += size; ///---------
 		return ret;
 	}
 	pmem_unmap(addr,size);
@@ -144,6 +155,7 @@ pmem_chunk_alloc(size_t size, size_t alignment, bool base, bool *zero,
 	pmem_unmap(addr,((intptr_t)ret-(intptr_t)addr));
 	pmem_unmap((void*)((intptr_t)ret+size),((intptr_t)addr+size-(intptr_t)ret));
 	((log_chunk_t *)ret)->file_no = mmap_file-1;
+	pmem_consmp += size; ///--------
 	return ret;
 }
 
@@ -205,6 +217,7 @@ pmem_chunk_dealloc(log_chunk_t *chunk, size_t size, bool unmap){
 
 	sprintf(str,"/mnt/pmem/%d",chunk->file_no);
 	pmem_unmap(chunk,size);
+	pmem_consmp -= size; ///-------------
 	remove(str);
 }
 
