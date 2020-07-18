@@ -1,6 +1,6 @@
 #define	JEMALLOC_CHUNK_C_
 #include "jemalloc/internal/jemalloc_internal.h"
-
+#include "libpmem.h"
 /******************************************************************************/
 /* Data. */
 
@@ -30,8 +30,64 @@ size_t		chunk_npages;
 size_t		map_bias;
 size_t		arena_maxclass; /* Max size class for arenas. */
 
+/**************外部变量声明***********************/
+extern int mmap_file;
+extern unsigned long long pmem_consmp;
+
+
 /******************************************************************************/
 /* Function prototypes for non-inline static functions. */
+
+void*
+jepmem_chunk_alloc(size_t size, size_t alignment, bool base, bool *zero,
+    dss_prec_t dss_prec, arena_chunk_t ** chunk){
+	void *ret,*addr;
+	char str[32];
+	size_t mapped_len;
+	int is_pmem;
+
+	sprintf(str,"/mnt/pmem/%d",mmap_file);
+	mmap_file++;
+
+//	printf("mmap_file:%d\n", mmap_file);
+
+	if((addr=pmem_map_file(str,size,PMEM_FILE_CREATE,0666,&mapped_len, &is_pmem))==NULL){
+		perror("pmem_map_file");
+		exit(1);
+	}
+	if((uintptr_t)addr==ALIGNMENT_CEILING((uintptr_t)addr,alignment)){
+		ret = addr;
+		((arena_chunk_t *)addr)->file_no = mmap_file-1;
+		pmem_consmp += size; ///---------
+//		printf("ret-fast: %llu\n", (unsigned long long)ret);
+		return ret;
+	}
+	pmem_unmap(addr,size);
+	remove(str);
+	if((addr=pmem_map_file(str,2*size,PMEM_FILE_CREATE,0666,&mapped_len, &is_pmem))==NULL){
+		perror("pmem_map_file");
+		exit(1);
+	}
+	ret = (void*)ALIGNMENT_CEILING((uintptr_t)addr,alignment);
+	pmem_unmap(addr,((intptr_t)ret-(intptr_t)addr));
+	pmem_unmap((void*)((intptr_t)ret+size),((intptr_t)addr+size-(intptr_t)ret));
+	((arena_chunk_t *)ret)->file_no = mmap_file-1;
+	pmem_consmp += size; 
+//	printf("ret-slow: %llu\n", (unsigned long long)ret);
+	*chunk = ret;
+	return ret;
+}
+
+void
+jepmem_chunk_dealloc(arena_chunk_t *chunk, size_t size, bool unmap){
+	char str[32];
+
+	sprintf(str,"/mnt/pmem/%d",chunk->file_no);
+	pmem_unmap(chunk,size);
+	pmem_consmp -= size; ///-------------
+	remove(str);
+}
+
 
 static void	*chunk_recycle(extent_tree_t *chunks_szad,
     extent_tree_t *chunks_ad, size_t size, size_t alignment, bool base,
