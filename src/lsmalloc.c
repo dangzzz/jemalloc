@@ -327,6 +327,7 @@ arena_gc_own(arena_t *arena)
 	log_chunk_t *lchunk = ql_first(&arena->lchunks_dirty);
 	log_chunk_t *lchunktodel;
 	bool todel = false;
+	
 	while (lchunk != NULL)
 	{
 		/* 实际gc迭代到的lchunk的入口 */

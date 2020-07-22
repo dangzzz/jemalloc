@@ -978,11 +978,18 @@ arena_lmalloc(arena_t *arena, size_t size, bool zero, bool try_tcache, void **pt
 
 	tcache_t *tcache;
 	if (size <= LOG_MINSIZE) {
+		size+=sizeof(void **);
+		void *ret;
 		if (try_tcache && (tcache = tcache_get(true)) != NULL)
-			return (tcache_alloc_small(tcache, size, zero));
+			ret = (tcache_alloc_small(tcache, size, zero));
+			*(intptr_t *)ret = (intptr_t)ptr;
+			return (void*)((intptr_t)ret+sizeof(void **));
+
 		else {
-			return (arena_malloc_small(choose_arena(arena), size,
+			ret = (arena_malloc_small(choose_arena(arena), size,
 			    zero));
+			*(intptr_t *)ret = (intptr_t)ptr;
+			return (void*)((intptr_t)ret+sizeof(void **));
 		}
 	} else {
 		return arena_log_malloc(choose_arena(arena),size,zero,ptr);
