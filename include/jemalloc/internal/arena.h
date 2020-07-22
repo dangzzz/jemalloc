@@ -166,6 +166,9 @@ struct arena_chunk_s {
 	/* 标识是否是lchunk,必须是第一个成员 */
 	bool					logchunk;
 #endif
+	/*用于标识文件*/
+	int file_no;
+
 	/* Arena that owns the chunk. */
 	arena_t			*arena;
 

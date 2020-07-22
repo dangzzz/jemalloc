@@ -1,13 +1,14 @@
-//g++ -g3 -pg  main.cpp -o main -L ./lib -I ./include/jemalloc/   -ljemalloc -static -lpthread
+ //g++ -g3  alloc_test.cpp -o alloc_test -L ./lib -I ./include/jemalloc/   -ljemalloc --std=c++11
+//g++ -g3 -pg  alloc_test.cpp -o alloc_test -L ./lib -I ./include/jemalloc/   -ljemalloc -static -lpthread
 #define JEMALLOC_LSMALLOC
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <vector>
 #include <random>
 #include <string.h>
 #include <sys/time.h>
-#include "jemalloc.h"
+#include <jemalloc.h>
+//#include <gperftools/profiler.h>
 
 using namespace std;
 
@@ -25,6 +26,8 @@ const int size_1g=10737429*2;
 const int size_5g=53687092*2;
 const int size_10g=107374183*2;
 
+//int aaa[1000000]; //useless
+
 void * rd_addr[size_500m];
 ull rd_sz[size_500m];
 ull alloc_object_num;  //number of live objects
@@ -37,10 +40,12 @@ ull free_time;
 ull tot_time;
 struct timeval s_time, e_time;
 
+ull iniRSS;
 ull rdsize = sizeof(rd_addr) + sizeof(rd_sz); 
 
 ull getRSS()
 {
+/*
 	FILE * fstats = fopen("/proc/self/statm", "r");
 	//the file contains 7 data:
 	//vmsize vmrss shared text lib data dt
@@ -62,7 +67,10 @@ ull getRSS()
 	while ( *pos && *pos != ' ' ) ++pos;
 	ull shared = atol(pos);
 	//ull shared = 0; 
+//	return rss*4*1024;
 	return (rss-shared)*4*1024; //B
+*/
+	return get_pmem_consmp();
 }
 
 
@@ -70,10 +78,10 @@ ull getRSS()
 /*allocate one object, size=sz*/
 void malloc_one(ull sz)
 { 
-
+	gettimeofday(&s_time, NULL);
 	rd_addr[alloc_object_num] = log_malloc(sz, &rd_addr[alloc_object_num]);
-	//rd_addr[alloc_object_num] = yesmalloc(sz);
-
+//	rd_addr[alloc_object_num] = yesmalloc(sz);
+	gettimeofday(&e_time, NULL);
 	malloc_time += (e_time.tv_sec-s_time.tv_sec)*1000000+(e_time.tv_usec-s_time.tv_usec);
 	
 	memset(rd_addr[alloc_object_num], -1, sz); /////
@@ -89,12 +97,11 @@ void free_one(ull x)
 {
 	live_sz -= rd_sz[x];
 
-
+	gettimeofday(&s_time, NULL);
 	log_free(rd_addr[x]);
 //	yesfree(rd_addr[x]);
-
+	gettimeofday(&e_time, NULL);
 	free_time += (e_time.tv_sec-s_time.tv_sec)*1000000+(e_time.tv_usec-s_time.tv_usec);
-//	printf("%llu\n", free_time);
 
 	rd_sz[x] = 0; //=0 means freed
 }
@@ -154,7 +161,6 @@ ull get_size_after()
 	}
 }
 
-/*
 void print_stats()
 {
 	if (test_flag != 2) return; 
@@ -175,17 +181,19 @@ void print_stats()
 			tot_before_num, tot_after_num, 1.0*tot_before_num/(tot_before_num+tot_after_num));
 	printf("---------\n");
 }
-*/
+
 
 ull test()
 {
 	ull maxRSS = 0;
-	ull cnt = 0; //print some message
 	alloc_sz = 0; 
 	live_sz = 0;
 	alloc_object_num = 0;
 	bool flag_print = true;
 
+//	FILE * fp = fopen("nowRSS-je.txt", "w");
+	//if (fp == NULL) exit(-1);
+	ull cnt = 0; //print some message
 
 	/***************************Phase1 : Before*****************************/
 
@@ -197,8 +205,12 @@ ull test()
 		while (live_sz + sz > max_live_sz) rand_delete_one();
 
 		malloc_one(sz);
-/*without getRSS		
+		
 		ull nowRSS = getRSS();
+		
+		cnt++;
+//		fprintf(fp, "%llu\n", nowRSS-iniRSS);
+		
 		if (nowRSS > maxRSS)
 		{
 			flag_print = true;
@@ -210,10 +222,11 @@ ull test()
 			print_stats();
 			flag_print = false;
 		}
-*/
+//*/
 	}	
 
-//	printf("after phase1: nowRSS = %llu, maxRSS = %llu\n", getRSS()-rdsize, maxRSS-rdsize);
+	printf("after phase1: nowRSS = %llu, maxRSS = %llu\n", getRSS(), maxRSS);
+	printf("cnt = %llu\n", cnt);
 
 	if (test_flag == 1) 
 	{
@@ -244,13 +257,17 @@ ull test()
 		{
 			del_sz += rd_sz[id];
 			free_one(id);
+		
+			cnt++;
+//			fprintf(fp, "%llu\n", getRSS()-iniRSS);
+		
 		}
 	}
 
+	printf("cnt = %llu\n", cnt);
 	/***************************Phase3 : After*****************************/
 
 	printf("\n----Phase3-----\n");
-//	fprintf(fp, "-------------------------------------phase3-----------------------------------\n");
 	alloc_sz = 0;
 	while (alloc_sz < max_alloc_sz)
 	{
@@ -260,8 +277,12 @@ ull test()
 		
 
 		malloc_one(sz);
-/*without getRSS
+
 		ull nowRSS = getRSS();
+
+		cnt++;
+//		fprintf(fp, "%llu\n", nowRSS-iniRSS);
+		
 		if (nowRSS > maxRSS)
 		{
 			flag_print = true;
@@ -273,36 +294,36 @@ ull test()
 			print_stats();
 			flag_print = false;
 		}
-*/
 	}	
 	
-	//printf("after phase3: nowRSS = %llu, maxRSS = %llu\n", getRSS()-rdsize, maxRSS-rdsize);
-
+	printf("after phase3: nowRSS = %llu, maxRSS = %llu\n", getRSS(), maxRSS);
+	printf("cnt = %llu\n", cnt);
+	//fclose(fp);
 	return maxRSS;	
 }
 
 int main(int argc, char *argv[])
 {	
-	//ProfilerStart("jemalloc_gperftools_result");
-//	ProfilerStart("jemalloc_gperftools_result");
-    
-	/*withou maxRSS
-	memset(rd_addr, -1, sizeof(rd_addr)); //useless
+//	ProfilerStart("test-lsmalloc.prof");
+
+//	printf("1: %llu\n", getRSS());
+	srand((unsigned)time(NULL));
 	memset(rd_sz, -1, sizeof(rd_sz)); //useless
+	memset(rd_addr, -1, sizeof(rd_addr)); //useless 
 	rd_addr[rand()% 100000] = &rd_sz[rand()%1000000]; //useless 
 	rd_sz[rand()%100000] = 10; //useless
-	printf("%llu\n", getRSS()); //useless
+	iniRSS = getRSS();
+	printf("iniRSS = %llu rdsize = %llu\n", iniRSS, rdsize); //useless
 	printf("%llu %llu\n", (ull)rd_addr[rand()%100000], (ull)rd_sz[rand()%100000]); //useless
-*/
-	for(int ii = 0;ii<10;ii++){
 
-	srand((unsigned)time(NULL));
+
 	malloc_time = 0;
 	free_time = 0;
 
+	//test_flag = 7;
 	test_flag = argv[1][0] - '0'; //'1' --> 1
 	ull maxrss = test();
-	printf("rd size = %llu  maxRSS = %llu maxRSS-rdsize = %llu\n", rdsize, maxrss, maxrss-rdsize);
+	printf("maxRSS = %llu\n", maxrss);
 
 	//free all memory
 	ull tot_before_num = 0, tot_after_num = 0;
@@ -318,14 +339,8 @@ int main(int argc, char *argv[])
 			free_one(i);
 		}
 	}
-	printf("live_lchunk:%d.\n",live_lchunk);
-	printf("live_avail:%d.\n",live_avail);
-	printf("live_dirty:%d.\n",live_dirty);
-        printf("fast_time:%d.\n",fast_time);
-	printf("slow_time:%d.\n",slow_time);
-	}
-//	printf("countf:%d.\n",countf);
-/*	
+
+	
 	if (test_flag == 2)
 		printf("tot_before_num = %llu\ntot_after_num = %llu, before/all=%.2f\n", 
 				tot_before_num, tot_after_num, 1.0*tot_before_num/(tot_before_num+tot_after_num));
@@ -333,7 +348,7 @@ int main(int argc, char *argv[])
 	printf("time cost(microsecond):\n");
 	printf("malloc_time: %llu\nfree_time:   %llu\ntot_time:    %llu\n", 
 			malloc_time, free_time, malloc_time + free_time);
-*/	
+
 //	ProfilerStop();
 	return 0;	
 }

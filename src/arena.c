@@ -553,8 +553,13 @@ arena_chunk_init_hard(arena_t *arena)
 
 	zero = false;
 	malloc_mutex_unlock(&arena->lock);
-	chunk = (arena_chunk_t *)chunk_alloc(chunksize, chunksize, false,
-	    &zero, arena->dss_prec);
+	//pmem version
+	//chunk = (arena_chunk_t *)chunk_alloc(chunksize, chunksize, false,
+	//    &zero, arena->dss_prec);
+	void * xxx = jepmem_chunk_alloc(chunksize, chunksize, false,
+	    &zero, arena->dss_prec, &chunk);
+	//printf("xxx addr: %llu\n", (unsigned long long)xxx);
+	//printf("chunk addr: %llu\n", (unsigned long long)chunk);
 	malloc_mutex_lock(&arena->lock);
 	if (chunk == NULL)
 		return (NULL);
@@ -564,7 +569,7 @@ arena_chunk_init_hard(arena_t *arena)
 #ifdef JEMALLOC_LSMALLOC
 	chunk->logchunk = false;
 #endif
-	chunk->arena = arena;
+	((arena_chunk_t *)chunk)->arena = arena;
 
 	/*
 	 * Claim that no pages are in use, since the header is merely overhead.
@@ -654,7 +659,10 @@ arena_chunk_dealloc(arena_t *arena, arena_chunk_t *chunk)
 
 		arena->spare = chunk;
 		malloc_mutex_unlock(&arena->lock);
-		chunk_dealloc((void *)spare, chunksize, true);
+		//pmem version
+		//	chunk_dealloc((void *)spare, chunksize, true);
+		jepmem_chunk_dealloc(spare, chunksize, true);
+		
 		malloc_mutex_lock(&arena->lock);
 		if (config_stats)
 			arena->stats.mapped -= chunksize;
